@@ -1,9 +1,9 @@
 import sys
-from PyQt5.QtCore import Qt, QPoint, QRectF, QTimer
+from PyQt5.QtCore import *
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPainter, QColor, QFont, QPalette
+from PyQt5.QtGui import *
 import page
-from clock import draw_clock
+from draw_clock import draw_clock
 
     
 class my_window(QtWidgets.QMainWindow):

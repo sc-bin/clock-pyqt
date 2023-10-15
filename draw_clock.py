@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QPoint, QRectF, QTimer
-from PyQt5.QtGui import QPainter, QColor, QFont, QPalette
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5 import QtWidgets
 import math
 from datetime import datetime
@@ -68,6 +68,13 @@ class draw_clock(QPainter):
         painter.setFont(tmp_font)
         size = painter.font().pointSize()
         for i in range(1, 13):
+            if i == datetime.now().hour%12:
+                painter.setPen( Color_hour_pointer )
+                painter.setBrush( Color_hour_pointer )
+            else :
+                painter.setPen( Color_hour_line )
+                painter.setBrush( Color_hour_line )
+                
             rect = QRectF()
             mx =  80 * math.sin(math.radians(i*30)) - size 
             my =  80 * math.cos(math.radians(i*30)) + size / 2
@@ -84,7 +91,7 @@ class draw_clock(QPainter):
 
     
         # 时针
-        painter.setPen( Color_hour_pointer )
+        painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush( Color_hour_pointer )
         painter.save()
         painter.rotate(30.0 * (  datetime.now().hour  + datetime.now().minute / 60 ))
@@ -92,7 +99,7 @@ class draw_clock(QPainter):
         painter.restore()
 
         # 分针
-        painter.setPen( Color_minute_pointer )
+        painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush( Color_minute_pointer )
         painter.save()
         painter.rotate(6 * datetime.now().minute)
@@ -100,8 +107,9 @@ class draw_clock(QPainter):
         painter.restore()
 
         # 秒针
-        painter.setPen( Color_sec_pointer )
+        painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush( Color_sec_pointer )
+        
         painter.save()
         painter.rotate(6 * datetime.now().second)
         painter.drawConvexPolygon(pointr_sec)
