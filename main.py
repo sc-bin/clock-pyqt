@@ -1,15 +1,39 @@
 import sys
+from PyQt5.QtCore import Qt, QPoint, QRectF, QTimer
 from PyQt5 import QtWidgets
+from PyQt5.QtGui import QPainter, QColor, QFont, QPalette
 import page
+from clock import draw_clock
 
-class my_page(page.Ui_MainWindow):
-    pass
+    
+class my_window(QtWidgets.QMainWindow):
+    def paintEvent(self, event):
+        # print("paintEvent")
+        draw_clock(self, QPainter(self), event)
+
+        
 
 app = QtWidgets.QApplication(sys.argv)
-window = QtWidgets.QMainWindow()
-ui = my_page()
+window = my_window()
+ui = page.Ui_MainWindow()
 ui.setupUi(window)
 
+# 设置按钮关闭窗口
+def close_window():
+    window.close()
+ui.pushButton.clicked.connect(close_window)
 
-window.show()
+# 背景设置黑色
+pal = QPalette(window.palette())
+pal.setColor( QPalette.ColorRole.Background , QColor(Qt.GlobalColor.black))
+window.setPalette(pal)
+
+# 定时触发重绘
+window.timer = QTimer()  # 定时器
+window.timer.timeout.connect(window.update)
+window.timer.start(1000)  # 每1s 更新一次
+
+
+# window.show()
+window.showFullScreen()
 sys.exit(app.exec_())
