@@ -17,14 +17,27 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>990</x>
-      <y>0</y>
+      <x>1700</x>
+      <y>900</y>
       <width>221</width>
       <height>151</height>
      </rect>
     </property>
     <property name="text">
      <string>关闭</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_clock">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1080</width>
+      <height>1080</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

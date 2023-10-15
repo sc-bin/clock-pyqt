@@ -52,11 +52,14 @@ pointr_sec=[
 
 class draw_clock(QPainter):
     window:QtWidgets.QMainWindow
-
+    left_x:int
+    left_y:int
+    width:int
+    height:int
 
     def draw(self, painter:QPainter):
-        side = min( self.window.width(), self.window.height())
-        painter.translate( side/2, side/2)
+        side = min( self.width, self.height)
+        painter.translate( self.left_x + side/2, self.left_y + side/2)
         painter.scale(side / 200.0, side / 200.0)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -157,9 +160,13 @@ class draw_clock(QPainter):
 
 
 
-    def __init__(self, window:QtWidgets.QMainWindow,  painter:QPainter, event):
+    def __init__(self, window:QtWidgets.QMainWindow,  painter:QPainter, label:QtWidgets.QLabel):
         # painter.begin(window)
         self.window = window
+        self.width = label.width()
+        self.height = label.height()
+        self.left_x = label.pos().x()
+        self.left_y = label.pos().y()
         self.draw(painter)
         # painter.end()
    
