@@ -27,7 +27,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_T2">
+   <widget class="QLabel" name="label_T1">
     <property name="geometry">
      <rect>
       <x>1080</x>
@@ -43,7 +43,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_T1">
+   <widget class="QLabel" name="label_T2">
     <property name="geometry">
      <rect>
       <x>1080</x>

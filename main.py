@@ -12,9 +12,9 @@ class my_window(QtWidgets.QMainWindow):
     def paintEvent(self, event):
         # print("paintEvent")
         draw_clock(self, QPainter(self), ui.label_clock)
-        draw_temp(self, QPainter(self), ui.label_T1, 0, "卧室")
-        draw_temp(self, QPainter(self), ui.label_T2, 1, "室外")
-        draw_temp(self, QPainter(self), ui.label_T3, 2, "室内")
+        draw_temp(self, QPainter(self), ui.label_T3, 0, "卧室")
+        draw_temp(self, QPainter(self), ui.label_T1, 1, "室外")
+        draw_temp(self, QPainter(self), ui.label_T2, 2, "室内")
         # draw_temp(self, QPainter(self), ui.label_T1, 1)
         # draw_temp(self, QPainter(self), ui.label_T1, 2)
         

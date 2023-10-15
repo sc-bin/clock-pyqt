@@ -5,9 +5,11 @@ import math
 from datetime import datetime
 from  mqtt_listen import *
 
-Color_str = QColor(50, 150, 100, 100)
-Color_num = QColor(100, 200, 50, 100)
+Color_str = QColor(150, 180, 150, 100)
+Color_num = QColor(150, 250, 80, 100)
 
+#define COLOR_TEMP_DATA QColor(0, 200, 150, 150)
+#define COLOR_TEMP_BACKGROUND QColor(180, 50, 180, 255)
 
 class draw_temp(QPainter):
     window:QtWidgets.QMainWindow
@@ -43,8 +45,6 @@ class draw_temp(QPainter):
         # 右下角数字
         painter.setPen( Color_num )
         tmp_font = QFont(painter.font())
-        # tmp_font.setPointSize(20)
-        # print(self.height)
         tmp_font.setPointSize(30)
         painter.setFont(tmp_font)
         size = painter.font().pointSize()
@@ -54,9 +54,20 @@ class draw_temp(QPainter):
         rect.setY( 0 )
         rect.setHeight(50)
         rect.setWidth(100)
-        # painter.drawLine(0, 0, mx, my)
         painter.drawText(rect, Qt.AlignmentFlag.AlignLeft, self.sensor.get_temp())
+        
+        # 图标外框
+        painter.setPen(Color_str)
+        painter.drawRect(-100, -50, 96, 100)
 
+        # 画今日15min曲线
+        painter.setPen(Color_num)
+        data = self.sensor.min15_today()
+        path = QPainterPath()
+        path.moveTo(-100, 50)
+        for i in range(len(data)):
+            path.lineTo(-100 + i, (-data[i] * 2 ) + 50 )
+        painter.drawPath(path)
 
     def __init__(self, window:QtWidgets.QMainWindow,  painter:QPainter, label:QtWidgets.QLabel, num:int, str:str):
         self.window = window
@@ -64,6 +75,7 @@ class draw_temp(QPainter):
         self.height = label.height()
         self.left_x = label.pos().x()
         self.left_y = label.pos().y()
+        label.hide()
         self.sensor = SENSOR[num]
         self.str = str
         self.draw(painter)

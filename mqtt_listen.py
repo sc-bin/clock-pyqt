@@ -67,7 +67,7 @@ class DEVICE:
         # print(str)
         cursor.execute(str)
         conn.commit() # 提交事务
-        value = cursor.fetchone()
+        value = cursor.fetchall()
         conn.close()
         return value
 
@@ -82,6 +82,19 @@ class DEVICE:
             '''.format(name))
         except:
             pass
+        
+    def min15_today(self) -> list:
+        data = [0 for i in range(96)]
+        value = self.__db_exe("SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self.table_15min))
+        # print(self.flag)
+        # print(type(value))
+        # print(len(value))
+        # for i in range(len(value)):
+        for i in value:
+            # data.append(i)
+            data[i[1]] = i[2] / 100
+        return data
+
 
     def get_temp(self) -> str:
         temp = int(self.__now_temp )
@@ -93,7 +106,7 @@ class DEVICE:
         if match :
             temp=match.group(1)
             self.__now_temp = temp
-            print(self.flag, "=", temp)
+            # print(self.flag, "=", temp)
             self.__db_creat_table(self.table_1s)
             self.__db_exe("INSERT INTO {0} (time, temp) VALUES ({1}, {2})".format(self.table_1s, time.time(), temp ))
 
