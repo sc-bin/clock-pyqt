@@ -5,7 +5,7 @@ import math
 from datetime import datetime
 from  mqtt_listen import *
 
-Color_str = QColor(40, 120, 50, 100)
+Color_str = QColor(50, 150, 100, 100)
 Color_num = QColor(100, 200, 50, 100)
 
 
