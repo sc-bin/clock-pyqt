@@ -13,37 +13,6 @@ topic = 'mes/#'
 
 
 
-# def self.__db_exe(str):
-#     today = datetime.now().strftime('%Y-%m-%d')
-#     filename = "db/" + today + ".db"
-#     folder = os.path.exists("./db")
-#     if not folder:                   #判断是否存在文件夹如果不存在则创建为文件夹
-#         os.makedirs("./db")            #makedirs 创建文件时如果路径不存在会创建这个路径
-#     conn = sqlite3.connect(filename, check_same_thread=False)
-#     cursor = conn.cursor()
-#     # print(str)
-#     cursor.execute(str)
-#     conn.commit() # 提交事务
-#     value = cursor.fetchone()
-#     conn.close()
-#     return value
-
-
-# def db_creat_temp_table(name):
-#     try:
-#         self.__db_exe('''
-#             CREATE TABLE {0} (
-#                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-#                 time INTEGER,
-#                 temp INTEGER
-#             )
-#         '''.format(name))
-#     except:
-#         pass
-
-
-
-
 class DEVICE:
     flag=""
     table_1s=""
@@ -128,14 +97,17 @@ class DEVICE:
           
         self.__db_creat_table(self.table_15min)
         try:
-
+            print("start")
             avg =  self.__db_exe("SELECT AVG(temp) FROM {0} WHERE time BETWEEN {1} AND {2}".format(self.table_1s, start_time, end_time))
-            avg = int(avg[0])
+            avg = int(avg[0][0])
             # print(f'Average temperature in the last completed 15-minute interval: {avg}')
             
             # 检查temp_15min表中是否有一行的time列等于last_interval
             # 如果没有这样的行，则插入一行新数据
-            if self.__db_exe('SELECT * FROM {0} WHERE time = {1}'.format(self.table_15min, last_interval)) is None:
+            print(last_interval)
+            tmp = self.__db_exe('SELECT * FROM {0} WHERE time = {1}'.format(self.table_15min, last_interval))
+            print(len(tmp) )
+            if len(tmp) == 0:
                 print("插入15min新行")
                 self.__db_exe('INSERT INTO {0} (time, temp) VALUES ({1}, {2})'.format(self.table_15min, last_interval, avg))
         except:
