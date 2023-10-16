@@ -85,20 +85,23 @@ class DEVICE:
         
     def min15_today(self) -> list:
         data = [0 for i in range(96)]
-        value = self.__db_exe("SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self.table_15min))
-        # print(self.flag)
-        # print(type(value))
-        # print(len(value))
-        # for i in range(len(value)):
-        for i in value:
-            # data.append(i)
-            data[i[1]] = i[2] / 100
+        try:
+            value = self.__db_exe("SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self.table_15min))
+            # print(self.flag)
+            # print(type(value))
+            # print(len(value))
+            # for i in range(len(value)):
+            for i in value:
+                # data.append(i)
+                data[i[1]] = i[2] / 100
+        except:
+            pass
         return data
+        
 
 
     def get_temp(self) -> str:
-        temp = int(self.__now_temp )
-        return str(temp/100) + "." + str(temp%100)
+        return self.__now_temp[0:2] + "." + self.__now_temp[2:]
 
     def fetch(self, msg):
         pattern = "Temp \[{0}\] = \[(\d+)\]".format(self.flag)
