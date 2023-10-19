@@ -112,16 +112,13 @@ class DEVICE:
           
         self.__db_creat_table(self.table_15min)
         try:
-            print("start")
             avg =  self.__db_exe("SELECT AVG(temp) FROM {0} WHERE time BETWEEN {1} AND {2}".format(self.table_1s, start_time, end_time))
             avg = int(avg[0][0])
             # print(f'Average temperature in the last completed 15-minute interval: {avg}')
             
             # 检查temp_15min表中是否有一行的time列等于last_interval
             # 如果没有这样的行，则插入一行新数据
-            print(last_interval)
             tmp = self.__db_exe('SELECT * FROM {0} WHERE time = {1}'.format(self.table_15min, last_interval))
-            print(len(tmp) )
             if len(tmp) == 0:
                 print("插入15min新行")
                 self.__db_exe('INSERT INTO {0} (time, temp) VALUES ({1}, {2})'.format(self.table_15min, last_interval, avg))
