@@ -5,7 +5,7 @@ import math
 from datetime import datetime
 from  mqtt_listen import *
 
-Color_str = QColor(150, 180, 150, 100)
+Color_str = QColor(100, 120, 100, 100)
 Color_num = QColor(150, 250, 80, 100)
 
 #define COLOR_TEMP_DATA QColor(0, 200, 150, 150)
@@ -58,7 +58,16 @@ class draw_temp(QPainter):
         
         # 图标外框
         painter.setPen(Color_str)
-        painter.drawRect(-100, -50, 96, 100)
+        painter.drawRect(-100, -50, 95, 100)
+
+        # 画昨日15min曲线
+        painter.setPen(Color_str)
+        data = self.sensor.min15_yesterday()
+        path = QPainterPath()
+        path.moveTo(-100, 50)
+        for i in range(len(data)):
+            path.lineTo(-100 + i, (-data[i] * 2 ) + 50 )
+        painter.drawPath(path)
 
         # 画今日15min曲线
         painter.setPen(Color_num)
@@ -68,6 +77,7 @@ class draw_temp(QPainter):
         for i in range(len(data)):
             path.lineTo(-100 + i, (-data[i] * 2 ) + 50 )
         painter.drawPath(path)
+
 
     def __init__(self, window:QtWidgets.QMainWindow,  painter:QPainter, label:QtWidgets.QLabel, num:int, str:str):
         self.window = window

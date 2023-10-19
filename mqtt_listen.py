@@ -23,15 +23,24 @@ class DEVICE:
         self.table_1s=str + "_s"
         self.table_15min=str + "_15min"
 
-    def __db_exe(self, str):
+    def __db_exe(self, str, is_today:bool=True):
+
+        yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+
         today = datetime.now().strftime('%Y-%m-%d')
-        filename = "db/" + today + ".db"
+        day = None
+        if is_today:
+            day = today
+        else:
+            day = yesterday
+
+        filename = "db/" + day + ".db"
         folder = os.path.exists("./db")
         if not folder:                   #判断是否存在文件夹如果不存在则创建为文件夹
             os.makedirs("./db")            #makedirs 创建文件时如果路径不存在会创建这个路径
         conn = sqlite3.connect(filename, check_same_thread=False)
-        # today = datetime.now().strftime('%Y-%m-%d')
-        # conn = sqlite3.connect(f'{today}.db', check_same_thread=False)
+
+
         cursor = conn.cursor()
         # print(str)
         cursor.execute(str)
@@ -53,13 +62,19 @@ class DEVICE:
             pass
         
     def min15_today(self) -> list:
-        data = [0 for i in range(96)]
+        data = [0 for i in range(95)]
         try:
             value = self.__db_exe("SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self.table_15min))
-            # print(self.flag)
-            # print(type(value))
-            # print(len(value))
-            # for i in range(len(value)):
+            for i in value:
+                # data.append(i)
+                data[i[1]] = i[2] / 100
+        except:
+            pass
+        return data
+    def min15_yesterday(self) -> list:
+        data = [0 for i in range(95)]
+        try:
+            value = self.__db_exe("SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self.table_15min), False)
             for i in value:
                 # data.append(i)
                 data[i[1]] = i[2] / 100
