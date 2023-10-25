@@ -17,20 +17,12 @@ class my_window(QtWidgets.QMainWindow):
         draw_temp(self, QPainter(self), ui.label_T2, 2, "室内")
         # draw_temp(self, QPainter(self), ui.label_T1, 1)
         # draw_temp(self, QPainter(self), ui.label_T1, 2)
-        
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.close()
 
 window = my_window()
 ui.setupUi(window)
-
-# 设置按钮关闭窗口
-def close_window():
-    window.close()
-ui.pushButton.clicked.connect(close_window)
-# ui.pushButton.setBackgroundRole()
-# 背景设置黑色
-pal = QPalette(ui.pushButton.palette())
-pal.setColor( QPalette.ColorRole.Background , QColor(Qt.GlobalColor.black))
-ui.pushButton.setPalette(pal)
 
 
 # 背景设置黑色

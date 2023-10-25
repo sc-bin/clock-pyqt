@@ -36,9 +36,6 @@ class Ui_MainWindow(object):
         self.label_T3.setFrameShape(QtWidgets.QFrame.Box)
         self.label_T3.setText("")
         self.label_T3.setObjectName("label_T3")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(1820, 1020, 101, 40))
-        self.pushButton.setObjectName("pushButton")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 23))
@@ -54,4 +51,3 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "关闭"))
