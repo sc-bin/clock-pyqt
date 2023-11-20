@@ -5,7 +5,7 @@ import re
 from datetime import datetime, timedelta
 import os
 
-HOST = "192.168.1.100" #服务器ip地址
+HOST = "192.168.1.111" #服务器ip地址
 PORT = 1800   #服务器端口
 USER = 'master'     #登陆用户名
 PASSWORD = 'master'    #用户名对应的密码
@@ -120,7 +120,7 @@ class DEVICE:
             # 如果没有这样的行，则插入一行新数据
             tmp = self.__db_exe('SELECT * FROM {0} WHERE time = {1}'.format(self.table_15min, last_interval))
             if len(tmp) == 0:
-                print("插入15min新行")
+                # print("插入15min新行")
                 self.__db_exe('INSERT INTO {0} (time, temp) VALUES ({1}, {2})'.format(self.table_15min, last_interval, avg))
         except:
             pass
