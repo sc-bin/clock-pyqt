@@ -85,7 +85,7 @@ class DEVICE:
 
 
     def get_temp(self) -> str:
-        return self.__now_temp[0:2] + "." + self.__now_temp[2:]
+        return self.__now_temp[0:-2] + "." + self.__now_temp[-2:]
 
     def fetch(self, msg):
         pattern = "Temp \[{0}\] = \[(\d+)\]".format(self.flag)
