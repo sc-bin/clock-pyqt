@@ -20,17 +20,7 @@ class label(QPainter):
     str:str
     _painter:QPainter
     rect:QRectF
-    def draw_number(self, num:int, color:QColor):
-        painter = self._painter
-        painter.setPen( color )
-        tmp_font = QFont(painter.font())
-        tmp_font.setPointSize(50)
-        painter.setFont(tmp_font)
-        size = painter.font().pointSize()
-        # print(size)
 
-        painter.drawText(self.rect, Qt.AlignmentFlag.AlignLeft, num)
-        
     def draw_str(self, string:str, color:QColor):
         painter = self._painter
         painter.setPen( color )

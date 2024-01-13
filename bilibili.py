@@ -11,7 +11,6 @@ for line in f.read().split(';'):   #按照字符：进行划分读取
     cookies[name]=value  #为字典cookies添加内容
 
 
-
 import requests                 # 用于得到网页链接
 import json                     # 用于解析JSON格式的库 
 
@@ -45,25 +44,7 @@ class API():
         self._UID = your_uid
         self.update()
 
-def get_fans(UID:int):
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0'}
-    if UID == None:
-        print("未输入姓名，请重新运行")
-        return
-    try:
-        response = requests.get('https://api.bilibili.com/x/space/upstat?mid=' +str(UID),headers=headers, cookies=cookies)
-        # response = requests.get('https://api.bilibili.com/x/relation/stat?vmid=' +str(UID), headers=headers, cookies=MY_COOKIE)
-    # 网络连接失败
-    except:
-        print("网络连接失败")
-    # 成功得到网页
-    else:
-        J_data = json.loads(response.text)
-        print(response.text)
-        # print(J_data)
-        # print(J_data['data'])
-        # print(J_data['data']['follower'])
-bili=API(UID)
-print("粉丝", bili.fans )
-print("点赞", bili.like )
-print("播放", bili.view )
+bilibili=API(UID)
+print("粉丝", bilibili.fans )
+print("点赞", bilibili.like )
+print("播放", bilibili.view )
