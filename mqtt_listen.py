@@ -17,11 +17,35 @@ class DEVICE:
     flag=""
     table_1s=""
     table_15min=""
-    __now_temp = "1234"
+    __now_temp = "0"
+    client:mqtt.Client
+    def on_connect(self,client, userdata, flags, rc):
+        rc_status = [ "连接成功", "协议版本错误", "无效的客户端标识", "服务器无法使用", "用户密码错误", "无授权" ]
+        print("connect：" , rc_status[rc])
+
+    def on_message(self,client, userdata, msg):
+        text= str(msg.payload,'utf-8')
+        self.fetch(text)
+        # print("主题：", msg.topic)
+        # print("消息：\r\n",  text,'\n' )
+
     def __init__(self, str) -> None:
         self.flag = str
         self.table_1s=str + "_s"
         self.table_15min=str + "_15min"
+
+        self.client = mqtt.Client()
+        self.client.on_connect = self.on_connect          #注册返回连接状态的回调函数
+        self.client.username_pw_set(USER, PASSWORD)   #如果服务器要求需要账户密码
+        self.client.will_set("test/die", "我死了", 0)  #设置遗嘱消息
+        self.client.connect(HOST, PORT, keepalive=600) # 连接服务器
+        #client.disconnect() #断开连接，不会触发遗嘱消息
+        
+        self.client.on_message = self.on_message      #定义回调函数
+        self.client.subscribe(topic, qos=0)   #订阅主题test/#
+        self.client.loop_start()                 #非阻塞，启动接收线程
+        # client.loop_forever()              #阻塞式，会卡死在这等待接收
+        
 
     def __db_exe(self, str, is_today:bool=True):
 
@@ -125,37 +149,13 @@ class DEVICE:
         except:
             pass
            
+
+
+
+
 SENSOR=[ 
-        DEVICE("T1"), 
-        DEVICE("T2"), 
-        DEVICE("T3")
-        ]
+    DEVICE("T1"), 
+    DEVICE("T2"), 
+    DEVICE("T3")
+]
 
-
-def on_connect(client, userdata, flags, rc):
-    rc_status = [ "连接成功", "协议版本错误", "无效的客户端标识", "服务器无法使用", "用户密码错误", "无授权" ]
-    print("connect：" , rc_status[rc])
-
-def on_message(client, userdata, msg):
-    text= str(msg.payload,'utf-8')
-    # print("主题：", msg.topic)
-    # print("消息：\r\n",  text,'\n' )
-
-    for i in SENSOR:
-        i.fetch(text)
-  
-
-client = mqtt.Client()
-client.on_connect = on_connect          #注册返回连接状态的回调函数
-client.username_pw_set(USER, PASSWORD)   #如果服务器要求需要账户密码
-client.will_set("test/die", "我死了", 0)  #设置遗嘱消息
-client.connect(HOST, PORT, keepalive=600) # 连接服务器
-#client.disconnect() #断开连接，不会触发遗嘱消息
- 
-client.on_message = on_message      #定义回调函数
-client.subscribe(topic, qos=0)   #订阅主题test/#
-client.loop_start()                 #非阻塞，启动接收线程
-# client.loop_forever()              #阻塞式，会卡死在这等待接收
- 
-
-        

@@ -4,19 +4,38 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import *
 import page
 from draw_clock import draw_clock
-from draw_temp import draw_temp
+from draw_label import label
+from  mqtt_listen import *
+
+Color_str = QColor(100, 120, 100, 100)
+Color_num = QColor(150, 250, 80, 100)
+Color_tmp_outside = QColor(250, 250, 0, 100)
+Color_tmp_outside_dim = QColor(50, 50, 30, 100)
+Color_tmp_inside = Color_num
 
 app = QtWidgets.QApplication(sys.argv)
 ui = page.Ui_MainWindow()
+
 class my_window(QtWidgets.QMainWindow):
     def paintEvent(self, event):
         # print("paintEvent")
         draw_clock(self, QPainter(self), ui.label_clock)
-        draw_temp(self, QPainter(self), ui.label_T3, 0, "卧室")
-        draw_temp(self, QPainter(self), ui.label_T1, 1, "室外")
-        draw_temp(self, QPainter(self), ui.label_T2, 2, "室内")
-        # draw_temp(self, QPainter(self), ui.label_T1, 1)
-        # draw_temp(self, QPainter(self), ui.label_T1, 2)
+        label(self, QPainter(self), ui.label_TNUM3).draw_number(SENSOR[0].get_temp(), Color_num)
+        label(self, QPainter(self), ui.label_TNUM1).draw_number(SENSOR[1].get_temp(), Color_tmp_outside)
+        label(self, QPainter(self), ui.label_TNUM2).draw_number(SENSOR[2].get_temp(), Color_tmp_inside)
+        label(self, QPainter(self), ui.label_STR3).draw_str( "卧室", Color_str)
+        label(self, QPainter(self), ui.label_STR1).draw_str( "室外", Color_str)
+        label(self, QPainter(self), ui.label_STR2).draw_str( "室内", Color_str)
+        label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[2].min15_today(), Color_tmp_inside)
+        label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_today(), Color_tmp_outside)
+        label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_yesterday(), Color_tmp_outside_dim)
+        # label(self, QPainter(self), ui.label_STR1).draw_frame( )
+        # label(self, QPainter(self), ui.label_STR2).draw_frame( )
+        # label(self, QPainter(self), ui.label_STR3).draw_frame( )
+        # label(self, QPainter(self), ui.label_TNUM1).draw_frame( )
+        # label(self, QPainter(self), ui.label_TNUM2).draw_frame( )
+        # label(self, QPainter(self), ui.label_TNUM3).draw_frame( )
+
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.close()

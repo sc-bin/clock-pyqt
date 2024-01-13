@@ -168,5 +168,6 @@ class draw_clock(QPainter):
         self.left_x = label.pos().x()
         self.left_y = label.pos().y()
         self.draw(painter)
+        label.hide()
         # painter.end()
    
