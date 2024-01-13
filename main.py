@@ -7,10 +7,10 @@ from draw_clock import draw_clock
 from draw_label import label
 from  mqtt_listen import *
 
-Color_str = QColor(100, 120, 100, 100)
-Color_num = QColor(150, 250, 80, 100)
-Color_tmp_outside = QColor(250, 250, 0, 100)
-Color_tmp_outside_dim = QColor(50, 50, 30, 100)
+Color_str = QColor(100, 100, 100, 200)
+Color_num = QColor(150, 250, 80, 200)
+Color_tmp_outside = QColor(255, 255, 0, 150)
+Color_tmp_outside_dim = Color_str
 Color_tmp_inside = Color_num
 
 app = QtWidgets.QApplication(sys.argv)
@@ -29,12 +29,7 @@ class my_window(QtWidgets.QMainWindow):
         label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[2].min15_today(), Color_tmp_inside)
         label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_today(), Color_tmp_outside)
         label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_yesterday(), Color_tmp_outside_dim)
-        # label(self, QPainter(self), ui.label_STR1).draw_frame( )
-        # label(self, QPainter(self), ui.label_STR2).draw_frame( )
-        # label(self, QPainter(self), ui.label_STR3).draw_frame( )
-        # label(self, QPainter(self), ui.label_TNUM1).draw_frame( )
-        # label(self, QPainter(self), ui.label_TNUM2).draw_frame( )
-        # label(self, QPainter(self), ui.label_TNUM3).draw_frame( )
+
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

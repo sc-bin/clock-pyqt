@@ -55,26 +55,9 @@ class label(QPainter):
         path = QPainterPath()
         path.moveTo(-100, 50)
         for i in range(len(data)):
-            path.lineTo(-100 + i, (-data[i] * 2 ) + 50 )
+            path.lineTo(-100 + i*2, (-data[i] * 2 ) + 50 )
         painter.drawPath(path)
 
-        # # 画昨日15min曲线
-        # painter.setPen(Color_str)
-        # data = self.sensor.min15_yesterday()
-        # path = QPainterPath()
-        # path.moveTo(-100, 50)
-        # for i in range(len(data)):
-        #     path.lineTo(-100 + i, (-data[i] * 2 ) + 50 )
-        # painter.drawPath(path)
-
-        # # 画今日15min曲线
-        # painter.setPen(Color_num)
-        # data = self.sensor.min15_today()
-        # path = QPainterPath()
-        # path.moveTo(-100, 50)
-        # for i in range(len(data)):
-        #     path.lineTo(-100 + i, (-data[i] * 2 ) + 50 )
-        # painter.drawPath(path)
 
 
     def __init__(self, window:QtWidgets.QMainWindow,  painter:QPainter, label:QtWidgets.QLabel):
