@@ -56,9 +56,11 @@ window.setPalette(pal)
 # 定时触发重绘
 window.timer = QTimer()  # 定时器
 window.timer.timeout.connect(window.update)
-window.timer.timeout.connect(bilibili.update)
 window.timer.start(1000)  # 每1s 更新一次
 
+bilitimer = QTimer()  # 定时器
+bilitimer.timeout.connect(bilibili.update)
+bilitimer.start(1000)  # 每10s 更新一次
 
 # window.show()
 window.showFullScreen()
