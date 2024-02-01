@@ -4,5 +4,4 @@
 #  依赖库
 ```
 pip install PyQt5 paho-mqtt requests
-$ pip3 install bilibili-api-python
 ```
