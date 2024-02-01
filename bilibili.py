@@ -2,24 +2,25 @@
 UID = 234504537
 
 
-# 把cookie存放到cookie.txt内
-f=open('cookie.txt','r')
+# # 把cookie存放到cookie.txt内
 cookies={}
-for line in f.read().split(';'):   #按照字符：进行划分读取
-    #其设置为1就会把字符串拆分成2份
-    name,value=line.strip().split('=',1)
-    cookies[name]=value  #为字典cookies添加内容
 
+# def get_cookie_from_file():
+with open('cookie.txt', 'r') as f:
+    for line in f.read().split(';'):
+        if line.strip():  # 非空行
+            name, value = line.strip().split('=', 1)
+            cookies[name] = value
+    # return cookies
 
 import requests                 # 用于得到网页链接
 import json                     # 用于解析JSON格式的库 
 
-
 class API():
     _UID:int
-    fans:int
-    like:int
-    view:int
+    fans=0
+    like=0
+    view=0
     def update(self):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0'}
 
@@ -30,6 +31,11 @@ class API():
         except:
             print("粉丝数获取失败")
 
+        response = requests.get('https://api.bilibili.com/x/space/upstat?mid=' +str(self._UID),headers=headers, cookies=cookies)
+        J_data = json.loads(response.text)
+        print(J_data)
+        # self.view =  J_data['data']['archive']['view']
+        # self.like = J_data['data']['likes']
         try:
             response = requests.get('https://api.bilibili.com/x/space/upstat?mid=' +str(self._UID),headers=headers, cookies=cookies)
             J_data = json.loads(response.text)
