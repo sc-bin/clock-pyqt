@@ -34,7 +34,7 @@ class my_window(QtWidgets.QMainWindow):
         label(self, QPainter(self), ui.label_STR1).draw_str( "室外", Color_str)
         label(self, QPainter(self), ui.label_STR2).draw_str( "室内", Color_str)
         label(self, QPainter(self), ui.label_STR3).draw_str( "卧室", Color_str)
-        label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[2].min15_today(), Color_tmp_inside)
+        # label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[2].min15_today(), Color_tmp_inside)
         label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_today(), Color_tmp_outside)
         label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_yesterday(), Color_tmp_outside_dim)
 
