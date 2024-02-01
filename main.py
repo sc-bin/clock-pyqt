@@ -1,5 +1,9 @@
 import sys
 import threading
+#【可选代码】允许Thonny远程运行
+import os
+os.environ["DISPLAY"] = ":0.0"
+
 from PyQt5.QtCore import *
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import *
