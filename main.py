@@ -66,7 +66,7 @@ window.timer.start(1000)  # 每1s 更新一次
 
 bilitimer = QTimer()  # 定时器
 bilitimer.timeout.connect(bilibili.update)
-bilitimer.start(60 * 60 * 24 )  # 每隔24小时更新一次
+bilitimer.start(60 * 60 * 24 * 1000 )  # 每隔24小时更新一次
 # window.show()
 window.showFullScreen()
     
