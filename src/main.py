@@ -22,7 +22,7 @@ import page
 from draw_clock import draw_clock
 from draw_label import label
 from sensor_temp_diy import *
-from bilibili import bilibili
+from spider_bilibili import bilibili
 
 Color_str = QColor(100, 100, 100, 200)
 Color_num = QColor(150, 250, 80, 200)
