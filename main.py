@@ -18,7 +18,7 @@ timer.timeout.connect(lambda: None)  # Let the interpreter run each 100 ms
 import page
 from draw_clock import draw_clock
 from draw_label import label
-# from  mqtt_listen import *
+from  sensor_temp_diy import *
 from bilibili import bilibili
 Color_str = QColor(100, 100, 100, 200)
 Color_num = QColor(150, 250, 80, 200)
@@ -36,14 +36,14 @@ class my_window(QtWidgets.QMainWindow):
         # print("paintEvent")
         draw_clock(self, QPainter(self), ui.label_clock)
         
-        # label(self, QPainter(self), ui.label_TNUM1).draw_str(SENSOR[1].get_temp(), Color_tmp_outside)
-        # label(self, QPainter(self), ui.label_TNUM2).draw_str(SENSOR[2].get_temp(), Color_tmp_inside)
-        # label(self, QPainter(self), ui.label_TNUM3).draw_str(SENSOR[0].get_temp(), Color_num)
-        # label(self, QPainter(self), ui.label_STR1).draw_str( "室外", Color_str)
-        # label(self, QPainter(self), ui.label_STR2).draw_str( "室内", Color_str)
-        # label(self, QPainter(self), ui.label_STR3).draw_str( "卧室", Color_str)
-        # label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_today(), Color_tmp_outside)
-        # label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_yesterday(), Color_tmp_outside_dim)
+        label(self, QPainter(self), ui.label_TNUM1).draw_str(SENSOR[1].get_temp(), Color_tmp_outside)
+        label(self, QPainter(self), ui.label_TNUM2).draw_str(SENSOR[2].get_temp(), Color_tmp_inside)
+        label(self, QPainter(self), ui.label_TNUM3).draw_str(SENSOR[0].get_temp(), Color_num)
+        label(self, QPainter(self), ui.label_STR1).draw_str( "室外", Color_str)
+        label(self, QPainter(self), ui.label_STR2).draw_str( "室内", Color_str)
+        label(self, QPainter(self), ui.label_STR3).draw_str( "卧室", Color_str)
+        label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_today(), Color_tmp_outside)
+        label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_yesterday(), Color_tmp_outside_dim)
 
         label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str)
         label(self, QPainter(self), ui.label_up_fans).draw_str(str(bilibili.fans), Color_up_num)

@@ -14,6 +14,9 @@ topic = 'mes/#'
 
 
 class DEVICE:
+    '''
+    个人使用esp32自制的温度传感器
+    '''
     flag=""
     table_1s=""
     table_15min=""
@@ -38,7 +41,12 @@ class DEVICE:
         self.client.on_connect = self.on_connect          #注册返回连接状态的回调函数
         self.client.username_pw_set(USER, PASSWORD)   #如果服务器要求需要账户密码
         self.client.will_set("test/die", "我死了", 0)  #设置遗嘱消息
-        self.client.connect(HOST, PORT, keepalive=600) # 连接服务器
+        try:
+            self.client.connect(HOST, PORT, keepalive=600) # 连接服务器
+        except:
+            print("error: 不能连接到mqtt服务器")
+            print("\tHOST:%s\n\tPORT:%s" % ( HOST,PORT))
+            return
         #client.disconnect() #断开连接，不会触发遗嘱消息
         
         self.client.on_message = self.on_message      #定义回调函数
