@@ -13,7 +13,7 @@ topic = "homeassistant/#"
 
 
 class SENSOR_TEMP:
-    id: int
+    id: str
 
     def __init__(self, id_num: int) -> None:
         self.id = id_num
@@ -27,7 +27,7 @@ def get_str_mid(str_raw: str, str1: str, str2: str):
     if result_start == -1:
         return None
     result_start += len(str1)
-    end = str_raw.find(str2,result_start)
+    end = str_raw.find(str2, result_start)
     if end == -1:
         return None
     return str_raw[result_start:end]
@@ -38,7 +38,7 @@ class DEVICE_HASS_XIAOMI_TEMP_1:
     通过hass的mqtt转发功能,获取小米温湿度计1的信息
     """
 
-    sensors: list
+    sensors = {"0":SENSOR_TEMP("0")}
 
     flag = ""
     table_1s = ""
@@ -69,8 +69,11 @@ class DEVICE_HASS_XIAOMI_TEMP_1:
         )
         if id == None:
             return
-        print("得到id ", id)
-
+        if id not in self.sensors.keys() :
+            print("不存在id")
+            self.sensors[id] = SENSOR_TEMP(id)
+        else:
+            print("id存在")
     def __init__(self, str) -> None:
         # self.flag = str
         # self.table_1s = str + "_s"
