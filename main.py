@@ -46,11 +46,7 @@ class my_window(QtWidgets.QMainWindow):
         # label(self, QPainter(self), ui.label_chart).add_chart_line( SENSOR[1].min15_yesterday(), Color_tmp_outside_dim)
 
         label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str)
-        label(self, QPainter(self), ui.label_STR5).draw_str("点赞 :", Color_up_str)
-        label(self, QPainter(self), ui.label_STR6).draw_str("播放 :", Color_up_str)
         label(self, QPainter(self), ui.label_up_fans).draw_str(str(bilibili.fans), Color_up_num)
-        label(self, QPainter(self), ui.label_up_like).draw_str(str(bilibili.like), Color_up_num)
-        label(self, QPainter(self), ui.label_up_view).draw_str(str(bilibili.view), Color_up_num)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
