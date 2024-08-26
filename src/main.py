@@ -21,7 +21,7 @@ timer.timeout.connect(lambda: None)  # Let the interpreter run each 100 ms
 import page
 from draw_clock import draw_clock
 from draw_label import label
-from sensor_temp_diy import *
+from sensor_diy_temp import *
 from spider_bilibili import bilibili
 
 Color_str = QColor(100, 100, 100, 200)
