@@ -35,6 +35,9 @@ Color_up_num = QColor(255, 230, 230, 150)
 app = QtWidgets.QApplication(sys.argv)
 ui = page.Ui_MainWindow()
 
+# 设置鼠标指针为隐藏
+QCursor.setPos(QtWidgets.QApplication.instance().desktop().screen().rect().center())
+app.setOverrideCursor(Qt.BlankCursor)
 
 class my_window(QtWidgets.QMainWindow):
     def paintEvent(self, event):
