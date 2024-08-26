@@ -1,10 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import QtWidgets
-import math
-from datetime import datetime
-from  mqtt_listen import *
-
 
 
 class label(QPainter):
@@ -16,7 +12,6 @@ class label(QPainter):
     left_y:int
     width:int
     height:int
-    sensor:DEVICE
     str:str
     _painter:QPainter
     rect:QRectF
@@ -49,7 +44,6 @@ class label(QPainter):
         painter = self._painter
 
         painter.setPen(color)
-        # data = self.sensor.min15_yesterday()
         path = QPainterPath()
         path.moveTo(-100, 50)
         for i in range(len(data)):
@@ -63,11 +57,6 @@ class label(QPainter):
         self.left_x = label.pos().x()
         self.left_y = label.pos().y()
         label.hide()
-        # # 图标外框
-        # painter.setPen( Color_str )
-        
-        # painter.setPen(Color_str)
-        # painter.drawRect(-100, -50, 95, 100)
 
         painter.translate( self.left_x + self.width/2, self.left_y + self.height/2)
         painter.scale(self.width / 200.0, self.height / 100.0)
