@@ -12,18 +12,19 @@ PASSWORD = "pi"  # 用户名对应的密码
 topic = "homeassistant/#"
 
 
-class SENSOR_DATE:
+class DB_DATE:
     """
-    创建sqlite表格，用于存储与查找数据
+    创建sqlite表格，用于存储与查找一种属性数据
     """
 
     id: str
-    table_name_humidity_raw: str
+    page_name_raw: str
+    page_name_15min: str
 
-    def __init__(self, id_num: str) -> None:
-        self.id = id_num
-        self.table_name_humidity_raw = "s_" + id_num + "_humidity"
-        self.table_name_temperature_raw = "s_" + id_num + "_temperature"
+    def __init__(self, page_name_prefix: str) -> None:
+        self.id = page_name_prefix
+        self.page_name_raw = page_name_prefix
+        self.page_name_15min = page_name_prefix + "_15min"
 
     def _db_exe(self, cmd, is_today: bool = True):
         """
@@ -76,15 +77,11 @@ class SENSOR_DATE:
             )
         )
 
-    def add_humidity(self, value) -> None:
-        print("%s : humidity %s " % (self.id, value))
-        self._db_create_page(self.table_name_humidity_raw)
-        self._db_page_add_date(self.table_name_humidity_raw, time.time(), value)
-
-    def add_temperature(self, value) -> None:
-        print("%s : temperature %s " % (self.id, value))
-        self._db_create_page(self.table_name_temperature_raw)
-        self._db_page_add_date(self.table_name_temperature_raw, time.time(), value)
+    def add(self, value) -> None:
+        timestamp = time.time()
+        print("写入%s : \t%s \t%s" % (self.page_name_raw, timestamp, value))
+        self._db_create_page(self.page_name_raw)
+        self._db_page_add_date(self.page_name_raw, timestamp, value)
 
 
 def get_str_mid(str_raw: str, str1: str, str2: str):
@@ -103,15 +100,11 @@ def get_str_mid(str_raw: str, str1: str, str2: str):
 
 class DEVICE_HASS_XIAOMI_TEMP_1:
     """
-    通过hass的mqtt转发功能,获取小米温湿度计1的信息
+    通过hass的mqtt转发功能,获取所有小米温湿度计1的信息
     """
 
-    sensors = {"0": SENSOR_DATE("0")}
+    sensors = {"0": DB_DATE("0")}
 
-    flag = ""
-    table_1s = ""
-    table_15min = ""
-    __now_temp = "0"
     client: mqtt.Client
 
     def on_connect(self, client, userdata, flags, rc):
@@ -127,44 +120,33 @@ class DEVICE_HASS_XIAOMI_TEMP_1:
 
     def on_message(self, client, userdata, msg):
         text = str(msg.payload, "utf-8")
-        self.fetch_humidity(msg.topic, text)
-        self.fetch_temperature(msg.topic, text)
+        self.fetch_attr("humidity", msg.topic, text)
+        self.fetch_attr("temperature", msg.topic, text)
         # print("主题：", msg.topic)
         # print("消息：\r\n",  text,'\n' )
 
-    def fetch_humidity(self, topic: str, text: str):
+    def gen_page_name(self, id: str, attr: str) -> str:
+        return "s_" + id + "_" + attr
+
+    def fetch_attr(self, attr: str, topic: str, text: str):
         id = get_str_mid(
-            topic, "homeassistant/sensor/temperature_humidity_sensor_", "_humidity"
+            topic, "homeassistant/sensor/temperature_humidity_sensor_", "_" + attr
         )
         if id == None:
             return
-        if id not in self.sensors.keys():
-            self.sensors[id] = SENSOR_DATE(id)
+        sensor_key = self.gen_page_name(id, attr)
+        if sensor_key not in self.sensors.keys():
+            self.sensors[sensor_key] = DB_DATE(sensor_key)
 
         if (
             topic
             == "homeassistant/sensor/temperature_humidity_sensor_"
             + id
-            + "_humidity/state"
+            + "_"
+            + attr
+            + "/state"
         ):
-            self.sensors[id].add_humidity(text)
-
-    def fetch_temperature(self, topic: str, text: str):
-        id = get_str_mid(
-            topic, "homeassistant/sensor/temperature_humidity_sensor_", "_temperature"
-        )
-        if id == None:
-            return
-        if id not in self.sensors.keys():
-            self.sensors[id] = SENSOR_DATE(id)
-
-        if (
-            topic
-            == "homeassistant/sensor/temperature_humidity_sensor_"
-            + id
-            + "_temperature/state"
-        ):
-            self.sensors[id].add_temperature(text)
+            self.sensors[sensor_key].add(text)
 
     def __init__(self) -> None:
         self.client = mqtt.Client()
