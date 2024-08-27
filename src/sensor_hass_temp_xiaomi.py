@@ -92,29 +92,32 @@ class DB_DATE:
         last_interval = current_interval - 1
         # print("当前区间是", current_interval)
 
-        self._db_create_page(self.page_name_15min)
-        avg = self._db_exe(
-            "SELECT AVG(value) FROM {0} WHERE flag BETWEEN {1} AND {2}".format(
-                self.page_name_raw, start_time, end_time
-            )
-        )
-        avg = int((avg[0][0]))
-        # print(f'15分钟均值为: {avg}')
-
-        # 检查temp_15min表中是否有一行的time列等于last_interval
-        # 如果没有这样的行，则插入一行新数据
-        tmp = self._db_exe(
-            "SELECT * FROM {0} WHERE flag = {1}".format(
-                self.page_name_15min, last_interval
-            )
-        )
-        if len(tmp) == 0:
-            print("插入15min新行")
-            self._db_exe(
-                "INSERT INTO {0} (flag, value) VALUES ({1}, {2})".format(
-                    self.page_name_15min, last_interval, avg
+        try:
+            self._db_create_page(self.page_name_15min)
+            avg = self._db_exe(
+                "SELECT AVG(value) FROM {0} WHERE flag BETWEEN {1} AND {2}".format(
+                    self.page_name_raw, start_time, end_time
                 )
             )
+            avg = int((avg[0][0]))
+            # print(f'15分钟均值为: {avg}')
+
+            # 检查temp_15min表中是否有一行的time列等于last_interval
+            # 如果没有这样的行，则插入一行新数据
+            tmp = self._db_exe(
+                "SELECT * FROM {0} WHERE flag = {1}".format(
+                    self.page_name_15min, last_interval
+                )
+            )
+            if len(tmp) == 0:
+                print("插入15min新行")
+                self._db_exe(
+                    "INSERT INTO {0} (flag, value) VALUES ({1}, {2})".format(
+                        self.page_name_15min, last_interval, avg
+                    )
+                )
+        except:
+            pass
 
     def get_last_value(self) -> str:
         # cmd = "select value from %s order by id desc LIMIT 1;" % (self.page_name_raw)
@@ -127,14 +130,12 @@ class DB_DATE:
     def get_min15_today(self) -> list:
         data = [0 for i in range(95)]
         value = self._db_exe(
-            "SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(
-                self.page_name_15min
-            )
+            "SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self.page_name_15min)
         )
         for i in value:
             # data.append(i)
-            data[i[1]] = i[2] 
-  
+            data[i[1]] = i[2]
+
         return data
 
     def get_min15_yesterday(self) -> list:
@@ -148,7 +149,7 @@ class DB_DATE:
             )
             for i in value:
                 # data.append(i)
-                data[i[1]] = i[2] 
+                data[i[1]] = i[2]
         except:
             pass
         return data
