@@ -15,8 +15,14 @@ topic = "homeassistant/#"
 class SENSOR_TEMP:
     id: str
 
-    def __init__(self, id_num: int) -> None:
+    def __init__(self, id_num: str) -> None:
         self.id = id_num
+
+    def add_humidity(self, value) -> None:
+        print("%s : 湿度 %s " % (self.id, value))
+
+    def add_temperature(self, value) -> None:
+        print("%s : 温度 %s " % (self.id, value))
 
 
 def get_str_mid(str_raw: str, str1: str, str2: str):
@@ -38,7 +44,7 @@ class DEVICE_HASS_XIAOMI_TEMP_1:
     通过hass的mqtt转发功能,获取小米温湿度计1的信息
     """
 
-    sensors = {"0":SENSOR_TEMP("0")}
+    sensors = {"0": SENSOR_TEMP("0")}
 
     flag = ""
     table_1s = ""
@@ -60,6 +66,7 @@ class DEVICE_HASS_XIAOMI_TEMP_1:
     def on_message(self, client, userdata, msg):
         text = str(msg.payload, "utf-8")
         self.fetch(msg.topic, text)
+        self.fetch_temperature(msg.topic, text)
         # print("主题：", msg.topic)
         # print("消息：\r\n",  text,'\n' )
 
@@ -69,12 +76,35 @@ class DEVICE_HASS_XIAOMI_TEMP_1:
         )
         if id == None:
             return
-        if id not in self.sensors.keys() :
-            print("不存在id")
+        if id not in self.sensors.keys():
             self.sensors[id] = SENSOR_TEMP(id)
-        else:
-            print("id存在")
-    def __init__(self, str) -> None:
+
+        if (
+            topic
+            == "homeassistant/sensor/temperature_humidity_sensor_"
+            + id
+            + "_humidity/state"
+        ):
+            self.sensors[id].add_humidity(text)
+
+    def fetch_temperature(self, topic: str, text: str):
+        id = get_str_mid(
+            topic, "homeassistant/sensor/temperature_humidity_sensor_", "_temperature"
+        )
+        if id == None:
+            return
+        if id not in self.sensors.keys():
+            self.sensors[id] = SENSOR_TEMP(id)
+
+        if (
+            topic
+            == "homeassistant/sensor/temperature_humidity_sensor_"
+            + id
+            + "_temperature/state"
+        ):
+            self.sensors[id].add_temperature(text)
+
+    def __init__(self) -> None:
         # self.flag = str
         # self.table_1s = str + "_s"
         # self.table_15min = str + "_15min"
@@ -224,4 +254,4 @@ class DEVICE_HASS_XIAOMI_TEMP_1:
     #         pass
 
 
-xiaomi_temp = DEVICE_HASS_XIAOMI_TEMP_1("temp")
+xiaomi_temp = DEVICE_HASS_XIAOMI_TEMP_1()
