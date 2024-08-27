@@ -17,14 +17,15 @@ class DB_DATE:
     创建sqlite表格，用于存储与查找一种属性数据
     """
 
-    id: str
-    page_name_raw: str
-    page_name_15min: str
+    _id: str
+    _page_name_raw: str
+    _page_name_15min: str
+    _last_add_time: float
 
     def __init__(self, page_name_prefix: str) -> None:
-        self.id = page_name_prefix
-        self.page_name_raw = page_name_prefix
-        self.page_name_15min = page_name_prefix + "_15min"
+        self._id = page_name_prefix
+        self._page_name_raw = page_name_prefix
+        self._page_name_15min = page_name_prefix + "_15min"
 
     def _db_exe(self, cmd, is_today: bool = True):
         """
@@ -72,11 +73,11 @@ class DB_DATE:
 
     def _add(self, value) -> None:
         timestamp = time.time()
-        print("写入%s : \t%s \t%s" % (self.page_name_raw, timestamp, value))
-        self._db_create_page(self.page_name_raw)
+        print("写入%s : \t%s \t%s" % (self._page_name_raw, timestamp, value))
+        self._db_create_page(self._page_name_raw)
         self._db_exe(
             "INSERT INTO {0} (flag, value) VALUES ({1}, {2})".format(
-                self.page_name_raw, timestamp, value
+                self._page_name_raw, timestamp, value
             )
         )
 
@@ -93,10 +94,10 @@ class DB_DATE:
         # print("当前区间是", current_interval)
 
         try:
-            self._db_create_page(self.page_name_15min)
+            self._db_create_page(self._page_name_15min)
             avg = self._db_exe(
                 "SELECT AVG(value) FROM {0} WHERE flag BETWEEN {1} AND {2}".format(
-                    self.page_name_raw, start_time, end_time
+                    self._page_name_raw, start_time, end_time
                 )
             )
             avg = int((avg[0][0]))
@@ -106,44 +107,63 @@ class DB_DATE:
             # 如果没有这样的行，则插入一行新数据
             tmp = self._db_exe(
                 "SELECT * FROM {0} WHERE flag = {1}".format(
-                    self.page_name_15min, last_interval
+                    self._page_name_15min, last_interval
                 )
             )
             if len(tmp) == 0:
                 print("插入15min新行")
                 self._db_exe(
                     "INSERT INTO {0} (flag, value) VALUES ({1}, {2})".format(
-                        self.page_name_15min, last_interval, avg
+                        self._page_name_15min, last_interval, avg
                     )
                 )
         except:
             pass
+        self._last_add_time = time.time()
+
+    def is_update_in_10s(self) -> bool:
+        """
+        10s内是否更新过数据,用于判定是否离线
+        """
+        if time.time() > (self._last_add_time + 10):
+            return False
+        return True
 
     def get_last_value(self) -> str:
+        """
+        返回最近一个温度数值
+        """
         # cmd = "select value from %s order by id desc LIMIT 1;" % (self.page_name_raw)
         cmd = (
             "SELECT COALESCE((SELECT value FROM %s ORDER BY id DESC LIMIT 1), 0) AS latest_value;"
-            % (self.page_name_raw)
+            % (self._page_name_raw)
         )
         return str(self._db_exe(cmd)[0][0])
 
     def get_min15_today(self) -> list:
+        """
+        将一天按15分钟分为96个区间,list中为对应区间的平均值
+        读取的是今天的数据
+        """
         data = [0 for i in range(95)]
         value = self._db_exe(
-            "SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self.page_name_15min)
+            "SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(self._page_name_15min)
         )
         for i in value:
-            # data.append(i)
             data[i[1]] = i[2]
 
         return data
 
     def get_min15_yesterday(self) -> list:
+        """
+        将一天按15分钟分为96个区间,list中为对应区间的平均值。
+        读取的是昨天的数据
+        """
         data = [0 for i in range(95)]
         try:
             value = self._db_exe(
                 "SELECT * FROM {0} ORDER BY id DESC LIMIT 96".format(
-                    self.page_name_15min
+                    self._page_name_15min
                 ),
                 False,
             )
