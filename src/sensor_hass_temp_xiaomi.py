@@ -121,11 +121,11 @@ class DB_DATE:
             pass
         self._last_add_time = time.time()
 
-    def is_update_in_10s(self) -> bool:
+    def is_update_in_30s(self) -> bool:
         """
-        10s内是否更新过数据,用于判定是否离线
+        30s内是否更新过数据,用于判定是否离线
         """
-        if time.time() > (self._last_add_time + 10):
+        if time.time() > (self._last_add_time + 30):
             return False
         return True
 

@@ -47,7 +47,7 @@ class my_window(QtWidgets.QMainWindow):
 
         s_home_temp = xiaomi_temp.temperature("9e8b")
         if s_home_temp != None:
-            if s_home_temp.is_update_in_10s():
+            if s_home_temp.is_update_in_30s():
                 label(self, QPainter(self), ui.label_TNUM1).draw_str(
                     s_home_temp.get_last_value(), Color_tmp_outside
                 )
@@ -60,7 +60,7 @@ class my_window(QtWidgets.QMainWindow):
             )
         s_home_humi = xiaomi_temp.humidity("9e8b")
         if s_home_humi != None:
-            if s_home_humi.is_update_in_10s():
+            if s_home_humi.is_update_in_30s():
                 label(self, QPainter(self), ui.label_TNUM2).draw_str(
                     s_home_humi.get_last_value(), Color_tmp_inside
                 )
