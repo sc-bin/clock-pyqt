@@ -17,17 +17,24 @@ class label(QPainter):
     _painter: QPainter
     rect: QRectF
 
-    def draw_str(self, string: str, color: QColor):
+    def draw_str(
+        self, string, color: QColor, pointsize=30, offset_x=-100, offset_y=-50
+    ):
         """
         绘制字符串
         """
+        rect = QRectF()
+        rect.setX(offset_x)
+        rect.setY(offset_y)
+        rect.setHeight(100)
+        rect.setWidth(200)
+
         painter = self._painter
         painter.setPen(color)
         tmp_font = QFont(painter.font())
-        tmp_font.setPointSize(50)
+        tmp_font.setPointSize(pointsize)
         painter.setFont(tmp_font)
-        size = painter.font().pointSize()
-        painter.drawText(self.rect, Qt.AlignmentFlag.AlignLeft, string)
+        painter.drawText(rect, Qt.AlignmentFlag.AlignLeft, string)
 
     def draw_frame(self, color: QColor):
         """
@@ -60,13 +67,10 @@ class label(QPainter):
         self.left_y = label.pos().y()
         label.hide()
 
+        # 将xy坐标原点移到正中间
         painter.translate(self.left_x + self.width / 2, self.left_y + self.height / 2)
+        # 修改xy坐标点与实际像素距离的对应关系，xy变为宽200 高100
         painter.scale(self.width / 200.0, self.height / 100.0)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         self._painter = painter
-        self.rect = QRectF()
-        self.rect.setX(-80)
-        self.rect.setY(-30)
-        self.rect.setHeight(200)
-        self.rect.setWidth(200)

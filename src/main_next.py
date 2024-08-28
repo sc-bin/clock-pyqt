@@ -18,7 +18,7 @@ timer = QTimer()
 timer.start(100)  # You may change this if you wish.
 timer.timeout.connect(lambda: None)  # Let the interpreter run each 100 ms
 
-import page
+import page2 as page
 from draw_clock import draw_clock
 from draw_label import label
 from sensor_hass_temp_xiaomi import *
@@ -47,58 +47,47 @@ class my_window(QtWidgets.QMainWindow):
 
         s_home_temp = xiaomi_temp.temperature("9e8b")
         if s_home_temp != None:
+            str_temp = ""
             if s_home_temp.is_update_in_30s():
-                label(self, QPainter(self), ui.label_TNUM1).draw_str(
-                    s_home_temp.get_last_value(), Color_tmp_outside
-                )
+                str_temp += "🌡" + s_home_temp.get_last_value()
+
             else:
-                label(self, QPainter(self), ui.label_TNUM1).draw_str(
-                    "--", Color_tmp_outside
-                )
+                str_temp += "🌡--"
+
             label(self, QPainter(self), ui.label_chart).add_chart_line(
                 s_home_temp.get_min15_today(), Color_tmp_outside
             )
+            label(self, QPainter(self), ui.label_TNUM1).draw_str(
+                str_temp, Color_tmp_outside, 40
+            )
+
         s_home_humi = xiaomi_temp.humidity("9e8b")
         if s_home_humi != None:
+            str_humi = ""
             if s_home_humi.is_update_in_30s():
-                label(self, QPainter(self), ui.label_TNUM2).draw_str(
-                    s_home_humi.get_last_value(), Color_tmp_inside
-                )
+                str_humi += "🩸" + s_home_humi.get_last_value()
             else:
-                label(self, QPainter(self), ui.label_TNUM2).draw_str(
-                    "--", Color_tmp_outside
-                )
+                str_humi += "🩸--"
+            label(self, QPainter(self), ui.label_HNUM1).draw_str(
+                str_humi, Color_tmp_outside, 40
+            )
 
-        # temp = xiaomi_temp.get_temperature("9e8b")
-        # # temp = xiaomi_temp.get_temperature("9e8b")
-        # label(self, QPainter(self), ui.label_TNUM1).draw_str(temp, Color_tmp_outside)
-
-        # humi = xiaomi_temp.get_humidity("9e8b")
-        # label(self, QPainter(self), ui.label_TNUM2).draw_str(humi, Color_tmp_inside)
-
-        # label(self, QPainter(self), ui.label_TNUM1).draw_str(
-        #     SENSOR[1].get_temp(), Color_tmp_outside
-        # )
-        # label(self, QPainter(self), ui.label_TNUM2).draw_str(
-        #     SENSOR[2].get_temp(), Color_tmp_inside
-        # )
-        # label(self, QPainter(self), ui.label_TNUM3).draw_str(
-        #     SENSOR[0].get_temp(), Color_num
-        # )
-        # label(self, QPainter(self), ui.label_STR1).draw_str("室外", Color_str)
-        # label(self, QPainter(self), ui.label_STR2).draw_str("室内", Color_str)
-        # label(self, QPainter(self), ui.label_STR3).draw_str("卧室", Color_str)
-        # label(self, QPainter(self), ui.label_chart).add_chart_line(
-        #     SENSOR[1].min15_today(), Color_tmp_outside
-        # )
-        # label(self, QPainter(self), ui.label_chart).add_chart_line(
-        #     SENSOR[1].min15_yesterday(), Color_tmp_outside_dim
-        # )
-
-        label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str)
-        label(self, QPainter(self), ui.label_up_fans).draw_str(
-            str(bilibili.fans), Color_up_num
+        label(self, QPainter(self), ui.label_STR1).draw_str(
+            "室外", Color_str, 50, offset_x=-60
         )
+        label(self, QPainter(self), ui.label_STR2).draw_str(
+            "室内", Color_str, 50, offset_x=-60
+        )
+        label(self, QPainter(self), ui.label_STR3).draw_str(
+            "卧室", Color_str, 50, offset_x=-60
+        )
+
+        label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str, 50)
+        label(self, QPainter(self), ui.label_up_fans).draw_str(
+            str(bilibili.fans), Color_up_num, 50
+        )
+
+        # label(self, QPainter(self), ui.label_STR4).draw_frame(Color_tmp_outside)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
