@@ -91,24 +91,46 @@ class HASS_API:
                 pass
         return round(mean(sum), 2)
 
-    def get_day_by_1min(self, entity_id: str, day: str) -> list:
+    def get_day_all_minuter(self, entity_id: str, day: str) -> list:
         """
         返回指定日期内，每分钟的平均值,仅支持数值类型的实体
         @entity_id: 实体标识符
         @day: 格式为 2024-08-29
         """
-        re_list = []
-        for hour in range(24):
-            for minuter in range(60):
-                time_start = "%sT%d:%d" % (day, hour, minuter)
-                re_list.append(self.get_entity_hsitory_mean_in_1min(entity_id, time_start))
-        return re_list
+        def convert_to_east_eight(utc_dt_str):
+            without_microseconds = utc_dt_str.split(".")[0]
+            without_tz = without_microseconds.replace("+00:00", "")
+            last_changed_utc = datetime.fromisoformat(without_tz)
+            return last_changed_utc + timedelta(hours=8)
+
+        time_start = f"{day}T00:00+08:00"
+        time_end = f"{day}T23:59+07:59"
+        history = self.get_entity_hsitory(entity_id, time_start, time_end)
+
+        data = [[] for _ in range(24 * 60)]
+        for item in history[0]:
+            state = item["state"]
+            timestamp = item["last_changed"]
+            timestamp_east_eight = convert_to_east_eight(timestamp)  # 转换为东8区时间
+            minute_of_day = timestamp_east_eight.hour * 60 + timestamp_east_eight.minute
+            try:
+                data[minute_of_day].append(float(state))
+            except:
+                pass
+        data_average = []
+        for i in data:
+            if i.__len__() > 0:
+                data_average.append(average(i))
+            else:
+                data_average.append(0)
+
+        return data_average
 
     def get_yesterday_by_1min(self, entity_id: str) -> list:
         now = datetime.now()
         yesterday_midnight = now - timedelta(days=1)
         formatted_time = yesterday_midnight.strftime("%Y-%m-%d")
-        return self.get_day_by_1min(entity_id, formatted_time)
+        return self.get_day_all_minuter(entity_id, formatted_time)
 
     def __init__(self, token: str, ip="127.0.0.1", port="8123") -> None:
         self._api_prefix = "http://" + ip + ":" + port + "/api/"
@@ -126,9 +148,10 @@ test = HASS_API(HASS_TOKEN)
 now = datetime.now()
 yesterday_midnight = now - timedelta(days=1)
 formatted_time = yesterday_midnight.strftime("%Y-%m-%d")
-# res = test.get_day_by_1min("sensor.atc_52df_temperature", formatted_time)
 res = test.get_yesterday_by_1min("sensor.atc_52df_temperature")
 print(res.__len__())
+print(res[0])
+print(res[1000])
 
 """
 测试计算昨日每分钟均值，
