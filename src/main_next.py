@@ -1,5 +1,10 @@
 HASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTllODM4YTI2OWI0YjNlOWE5NzQ2Nzc2MDc3N2Y2MSIsImlhdCI6MTcyNDkxMTY0OSwiZXhwIjoyMDQwMjcxNjQ5fQ.6h_YU875EEImmW8EeBrTG4b0ASGDU1W5yXyTeJilsZ8"
-
+ID_OUT_TEMP = "sensor.atc_52df_temperature"
+ID_OUT_HUMI = "sensor.atc_52df_humidity"
+ID_BEDROOM_TEMP = "sensor.atc_52df_temperature"
+ID_BEDROOM_HUMI = "sensor.atc_52df_humidity"
+ID_COMPUTER_TEMP = "sensor.atc_52df_temperature"
+ID_COMPUTER_HUMI = "sensor.atc_52df_humidity"
 
 import sys
 import threading
@@ -43,63 +48,147 @@ QCursor.setPos(QtWidgets.QApplication.instance().desktop().screen().rect().cente
 app.setOverrideCursor(Qt.BlankCursor)
 
 
+def chart_calculate(list1: list, list2=[]):
+    """
+    供绘制折线图使用,最多传入两个list,返回合适显示的y轴最小值与最大值
+    """
+    y_min = 0
+    y_max = 0
+    list_all = list1 + list2
+
+    return (max(list_all) * 1.2,)
+
+
 class my_window(QtWidgets.QMainWindow):
     def paintEvent(self, event):
-        # print("paintEvent")
+
+        # 绘制时钟
         draw_clock(self, QPainter(self), ui.label_clock)
         now = datetime.now()
         formatted_time = now.strftime("%H:%M")
         label(self, QPainter(self), ui.label_clock_num).draw_str(
             formatted_time, QColor(255, 120, 0, 200), 50, offset_x=-90
         )
-        # label(self, QPainter(self), ui.label_clock_num).draw_frame(Color_up_str)
-
-        # 显示室外温度
-        str_temp = " 🌡"+ HASS_API(HASS_TOKEN).get_state("sensor.atc_52df_temperature") 
-        label(self, QPainter(self), ui.label_TNUM1).draw_str(
-            str_temp, Color_tmp_outside, 40, offset_y=-25
-        )
-        label(self, QPainter(self), ui.label_chart1).add_chart_line(
-            HASS_API(HASS_TOKEN).get_hsitory_yesterday("sensor.atc_52df_temperature"),
-            Color_tmp_outside_dim,
-            0,
-            50,
-        )
-        label(self, QPainter(self), ui.label_chart1).add_chart_line(
-            HASS_API(HASS_TOKEN).get_hsitory_today("sensor.atc_52df_temperature"),
-            Color_tmp_outside,
-            0,
-            50,
-        )
-        label(self, QPainter(self), ui.label_chart1).draw_frame(Color_up_str)
-
-        # 显示室外湿度
-        str_humi = "🩸"+ HASS_API(HASS_TOKEN).get_state("sensor.atc_52df_humidity") 
-        label(self, QPainter(self), ui.label_HNUM1).draw_str(
-            str_humi, Color_tmp_outside, 40, offset_y=-25
-        )
-        label(self, QPainter(self), ui.label_chart2).add_chart_line(
-            HASS_API(HASS_TOKEN).get_hsitory_today("sensor.atc_52df_humidity"),
-            Color_tmp_outside,
-            0,
-            100,
-        )
-        label(self, QPainter(self), ui.label_chart2).add_chart_line(
-            HASS_API(HASS_TOKEN).get_hsitory_yesterday("sensor.atc_52df_humidity"),
-            Color_tmp_outside_dim,
-            0,
-            100,
-        )
-        label(self, QPainter(self), ui.label_chart2).draw_frame(Color_up_str)
-
         label(self, QPainter(self), ui.label_STR1).draw_str(
             "室外", Color_str, 50, offset_x=-60
         )
         label(self, QPainter(self), ui.label_STR2).draw_str(
-            "室内", Color_str, 50, offset_x=-60
+            "卧室", Color_str, 50, offset_x=-60
         )
         label(self, QPainter(self), ui.label_STR3).draw_str(
-            "卧室", Color_str, 50, offset_x=-60
+            "电脑", Color_str, 50, offset_x=-60
+        )
+
+        # 显示室外温度
+        str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_OUT_TEMP)
+        label(self, QPainter(self), ui.label_TNUM1).draw_str(
+            str_temp, Color_tmp_outside, 40, offset_y=-25
+        )
+        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_TEMP)
+        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_TEMP)
+        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        y_min = int(min(non_zero_values))
+        y_max = int(max(non_zero_values) + 1)
+        label(self, QPainter(self), ui.label_chart1).add_chart_line(
+            data_yesterday,
+            Color_tmp_outside_dim,
+            y_min,
+            y_max,
+        )
+        label(self, QPainter(self), ui.label_chart1).add_chart_line(
+            data_today,
+            Color_tmp_outside,
+            y_min,
+            y_max,
+            show_dial=True,
+        )
+        label(self, QPainter(self), ui.label_chart1).draw_frame(Color_up_str)
+
+        # 显示室外湿度
+        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_OUT_HUMI)
+        label(self, QPainter(self), ui.label_HNUM1).draw_str(
+            str_humi, Color_tmp_outside, 40, offset_y=-25
+        )
+        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_HUMI)
+        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_HUMI)
+        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        y_min = int(min(non_zero_values))
+        y_max = int(max(non_zero_values) + 1)
+        label(self, QPainter(self), ui.label_chart2).add_chart_line(
+            data_today,
+            Color_tmp_outside,
+            y_min,
+            y_max,
+            show_dial=True,
+        )
+        label(self, QPainter(self), ui.label_chart2).add_chart_line(
+            data_yesterday,
+            Color_tmp_outside_dim,
+            y_min,
+            y_max,
+        )
+        label(self, QPainter(self), ui.label_chart2).draw_frame(Color_up_str)
+
+        # 显示卧室温度
+        str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_TEMP)
+        label(self, QPainter(self), ui.label_TNUM2).draw_str(
+            str_temp, Color_tmp_outside, 40, offset_y=-25
+        )
+        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_TEMP)
+        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_TEMP)
+        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        y_min = int(min(non_zero_values))
+        y_max = int(max(non_zero_values) + 1)
+        label(self, QPainter(self), ui.label_chart3).add_chart_line(
+            data_yesterday,
+            Color_tmp_outside_dim,
+            y_min,
+            y_max,
+        )
+        label(self, QPainter(self), ui.label_chart3).add_chart_line(
+            data_today,
+            Color_tmp_outside,
+            y_min,
+            y_max,
+            show_dial=True,
+        )
+        label(self, QPainter(self), ui.label_chart3).draw_frame(Color_up_str)
+
+        # 显示室外湿度
+        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_HUMI)
+        label(self, QPainter(self), ui.label_HNUM2).draw_str(
+            str_humi, Color_tmp_outside, 40, offset_y=-25
+        )
+        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_HUMI)
+        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_HUMI)
+        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        y_min = int(min(non_zero_values))
+        y_max = int(max(non_zero_values) + 1)
+        label(self, QPainter(self), ui.label_chart4).add_chart_line(
+            data_today,
+            Color_tmp_outside,
+            y_min,
+            y_max,
+            show_dial=True,
+        )
+        label(self, QPainter(self), ui.label_chart4).add_chart_line(
+            data_yesterday,
+            Color_tmp_outside_dim,
+            y_min,
+            y_max,
+        )
+        label(self, QPainter(self), ui.label_chart4).draw_frame(Color_up_str)
+
+        # 显示电脑旁温度
+        str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_TEMP)
+        label(self, QPainter(self), ui.label_TNUM3).draw_str(
+            str_temp, Color_tmp_outside, 40, offset_y=-25
+        )
+
+        # 显示电脑旁湿度
+        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_HUMI)
+        label(self, QPainter(self), ui.label_HNUM3).draw_str(
+            str_humi, Color_tmp_outside, 40, offset_y=-25
         )
 
         label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str, 50)

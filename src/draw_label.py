@@ -58,7 +58,9 @@ class label(QPainter):
         painter.drawRect(-100, -50, 200, 100)
         painter.restore()
 
-    def add_chart_line(self, data: list, color: QColor, y_min=0, y_max=50):
+    def add_chart_line(
+        self, data: list, color: QColor, y_min=0, y_max=50, show_dial=False
+    ):
         """
         利用传入的数据，绘制折线图
         @data: 数据列表
@@ -70,16 +72,33 @@ class label(QPainter):
         painter.save()
         painter.setPen(color)
         painter.translate(self.left_x, self.left_y + self.height)
-        painter.scale(self.width / len(data), self.height / y_max)
-
+        painter.scale(self.width / len(data), 1)
+        y_scale = self.height / (y_max - y_min)
         path = QPainterPath()
         path.moveTo(0, 0)
         for i in range(len(data)):
             if data[i] == 0:
                 path.lineTo(i, 0)
             else:
-                path.lineTo(i, -((data[i] - y_min)))
+                path.lineTo(i, -((data[i] - y_min)) * y_scale)
         painter.drawPath(path)
+
+        # 绘制y轴刻度
+        if show_dial:
+            point_size = int(self.height / 6)
+            tmp_font = QFont(painter.font())
+            tmp_font.setPointSize(point_size)
+            painter.setFont(tmp_font)
+            rect = QRectF()
+            rect.setHeight(self.height)
+            rect.setWidth(self.width)
+            rect.setX(int(point_size / 2))
+            rect.setY(0 - point_size * 2)
+            painter.drawText(rect, Qt.AlignmentFlag.AlignLeft, str(y_min))
+            rect.setX(int(point_size / 2))
+            rect.setY(0 - self.height)
+            painter.drawText(rect, Qt.AlignmentFlag.AlignLeft, str(y_max))
+
         painter.restore()
 
     def __init__(
