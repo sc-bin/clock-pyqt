@@ -5,10 +5,6 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 from numpy import *
 
-HASS_IP = "127.0.0.1"
-HASS_PORT = "8123"
-HASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTllODM4YTI2OWI0YjNlOWE5NzQ2Nzc2MDc3N2Y2MSIsImlhdCI6MTcyNDkxMTY0OSwiZXhwIjoyMDQwMjcxNjQ5fQ.6h_YU875EEImmW8EeBrTG4b0ASGDU1W5yXyTeJilsZ8"
-
 
 class HASS_API:
     """
@@ -41,7 +37,7 @@ class HASS_API:
             print("ERROR 连接到hass失败 :\n\t", text, "\n")
             return False
 
-    def get_entity_state(self, entity_id: str) -> str:
+    def get_state(self, entity_id: str) -> str:
         """
         返回实体的数值
         @entity_id : 实体标识符
@@ -51,7 +47,7 @@ class HASS_API:
             return "-"
         return text["state"]
 
-    def get_entity_hsitory(self, entity_id: str, start_time="", end_time=""):
+    def get_hsitory(self, entity_id: str, start_time="", end_time=""):
         """
         返回实体在指定时间段内的数值记录
         @start_time: 格式为 strftime("%Y-%m-%dT%H:%M:%S+08:00")
@@ -63,12 +59,12 @@ class HASS_API:
 
         para = {"filter_entity_id": entity_id, "end_time": end_time}
         para = urlencode(para)
-        history = test._get_json(
+        history = self._get_json(
             "history/period" + start_time + "?" + para + "&minimal_response"
         )
         return history
 
-    def get_entity_hsitory_mean_in_1min(self, entity_id: str, time: str) -> list:
+    def get_hsitory_in_1min(self, entity_id: str, time: str) -> list:
         """
         返回某一分钟内的均值，仅对数值型的实体有效
         @entity_id: 实体标识符
@@ -76,7 +72,7 @@ class HASS_API:
         """
         time_start = f"{time}:00+08:00"
         time_end = f"{time}:00+07:59"
-        history = self.get_entity_hsitory(
+        history = self.get_hsitory(
             entity_id,
             start_time=time_start,
             end_time=time_end,
@@ -91,12 +87,13 @@ class HASS_API:
                 pass
         return round(mean(sum), 2)
 
-    def get_day_all_minuter(self, entity_id: str, day: str) -> list:
+    def _get_hsitory_one_day_all_minuter(self, entity_id: str, day: str) -> list:
         """
         返回指定日期内，每分钟的平均值,仅支持数值类型的实体
         @entity_id: 实体标识符
         @day: 格式为 2024-08-29
         """
+
         def convert_to_east_eight(utc_dt_str):
             without_microseconds = utc_dt_str.split(".")[0]
             without_tz = without_microseconds.replace("+00:00", "")
@@ -105,7 +102,7 @@ class HASS_API:
 
         time_start = f"{day}T00:00+08:00"
         time_end = f"{day}T23:59+07:59"
-        history = self.get_entity_hsitory(entity_id, time_start, time_end)
+        history = self.get_hsitory(entity_id, time_start, time_end)
 
         data = [[] for _ in range(24 * 60)]
         for item in history[0]:
@@ -126,11 +123,23 @@ class HASS_API:
 
         return data_average
 
-    def get_yesterday_by_1min(self, entity_id: str) -> list:
+    def get_hsitory_yesterday(self, entity_id: str) -> list:
+        """
+        返回一个列表，对应昨天一天每分钟的平均值,仅支持数值类型的实体
+        @entity_id: 实体标识符
+        """
         now = datetime.now()
         yesterday_midnight = now - timedelta(days=1)
         formatted_time = yesterday_midnight.strftime("%Y-%m-%d")
-        return self.get_day_all_minuter(entity_id, formatted_time)
+        return self._get_hsitory_one_day_all_minuter(entity_id, formatted_time)
+    def get_hsitory_today(self, entity_id: str) -> list:
+        """
+        返回一个列表，对应今天一天每分钟的平均值,仅支持数值类型的实体
+        @entity_id: 实体标识符
+        """
+        now = datetime.now()
+        formatted_time = now.strftime("%Y-%m-%d")
+        return self._get_hsitory_one_day_all_minuter(entity_id, formatted_time)
 
     def __init__(self, token: str, ip="127.0.0.1", port="8123") -> None:
         self._api_prefix = "http://" + ip + ":" + port + "/api/"
@@ -144,22 +153,11 @@ class HASS_DATA:
         self._HASS_OPT = HASS_API(token, ip, port)
 
 
-test = HASS_API(HASS_TOKEN)
-now = datetime.now()
-yesterday_midnight = now - timedelta(days=1)
-formatted_time = yesterday_midnight.strftime("%Y-%m-%d")
-res = test.get_yesterday_by_1min("sensor.atc_52df_temperature")
-print(res.__len__())
-print(res[0])
-print(res[1000])
-
-"""
-测试计算昨日每分钟均值，
-
-采用for循环发出1440条请求
-real    0m36.264s
-user    0m17.279s
-sys     0m1.530s
-
-
-"""
+# test = HASS_API(HASS_TOKEN)
+# now = datetime.now()
+# yesterday_midnight = now - timedelta(days=1)
+# formatted_time = yesterday_midnight.strftime("%Y-%m-%d")
+# res = test.get_entity_hsitory_yesterday_all_minuter("sensor.atc_52df_temperature")
+# print(res.__len__())
+# print(res[0])
+# print(res[1000])

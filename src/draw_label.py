@@ -30,32 +30,57 @@ class label(QPainter):
         rect.setWidth(200)
 
         painter = self._painter
+        painter.save()
+        painter.translate(self.left_x + self.width / 2, self.left_y + self.height / 2)
+        # 将xy坐标原点移到正中间
+        painter.scale(self.width / 200.0, self.height / 100.0)
+        # 修改xy坐标点与实际像素距离的对应关系，xy变为宽200 高100
+
         painter.setPen(color)
         tmp_font = QFont(painter.font())
         tmp_font.setPointSize(pointsize)
         painter.setFont(tmp_font)
         painter.drawText(rect, Qt.AlignmentFlag.AlignLeft, string)
+        painter.restore()
 
     def draw_frame(self, color: QColor):
         """
         绘制一个外框
         """
         painter = self._painter
+        painter.save()
+        painter.translate(self.left_x + self.width / 2, self.left_y + self.height / 2)
+        # 将xy坐标原点移到正中间
+        painter.scale(self.width / 200.0, self.height / 100.0)
+        # 修改xy坐标点与实际像素距离的对应关系，xy变为宽200 高100
+
         painter.setPen(color)
         painter.drawRect(-100, -50, 200, 100)
+        painter.restore()
 
-    def add_chart_line(self, data: list, color: QColor):
+    def add_chart_line(self, data: list, color: QColor, y_min=0, y_max=50):
         """
         利用传入的数据，绘制折线图
+        @data: 数据列表
+        @color: 线条颜色
+        @y_min: y轴原点值
+        @y_max: y轴最大值
         """
         painter = self._painter
-
+        painter.save()
         painter.setPen(color)
+        painter.translate(self.left_x, self.left_y + self.height)
+        painter.scale(self.width / len(data), self.height / y_max)
+
         path = QPainterPath()
-        path.moveTo(-100, 50)
+        path.moveTo(0, 0)
         for i in range(len(data)):
-            path.lineTo(-100 + i * 2, (-data[i] * 2) + 50)
+            if data[i] == 0:
+                path.lineTo(i, 0)
+            else:
+                path.lineTo(i, -((data[i] - y_min)))
         painter.drawPath(path)
+        painter.restore()
 
     def __init__(
         self, window: QtWidgets.QMainWindow, painter: QPainter, label: QtWidgets.QLabel
@@ -67,10 +92,6 @@ class label(QPainter):
         self.left_y = label.pos().y()
         label.hide()
 
-        # 将xy坐标原点移到正中间
-        painter.translate(self.left_x + self.width / 2, self.left_y + self.height / 2)
-        # 修改xy坐标点与实际像素距离的对应关系，xy变为宽200 高100
-        painter.scale(self.width / 200.0, self.height / 100.0)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         self._painter = painter

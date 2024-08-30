@@ -1,3 +1,6 @@
+HASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTllODM4YTI2OWI0YjNlOWE5NzQ2Nzc2MDc3N2Y2MSIsImlhdCI6MTcyNDkxMTY0OSwiZXhwIjoyMDQwMjcxNjQ5fQ.6h_YU875EEImmW8EeBrTG4b0ASGDU1W5yXyTeJilsZ8"
+
+
 import sys
 import threading
 
@@ -21,7 +24,7 @@ timer.timeout.connect(lambda: None)  # Let the interpreter run each 100 ms
 import page2 as page
 from draw_clock import draw_clock
 from draw_label import label
-from sensor_hass_temp_xiaomi import *
+from hass_api import *
 from spider_bilibili import bilibili
 
 Color_str = QColor(100, 100, 100, 200)
@@ -44,33 +47,50 @@ class my_window(QtWidgets.QMainWindow):
     def paintEvent(self, event):
         # print("paintEvent")
         draw_clock(self, QPainter(self), ui.label_clock)
+        now = datetime.now()
+        formatted_time = now.strftime("%H:%M")
+        label(self, QPainter(self), ui.label_clock_num).draw_str(
+            formatted_time, QColor(255, 120, 0, 200), 50, offset_x=-90
+        )
+        # label(self, QPainter(self), ui.label_clock_num).draw_frame(Color_up_str)
 
-        s_home_temp = xiaomi_temp.temperature("9e8b")
-        if s_home_temp != None:
-            str_temp = ""
-            if s_home_temp.is_update_in_30s():
-                str_temp += "🌡" + s_home_temp.get_last_value()
+        # 显示室外温度
+        str_temp = " 🌡"+ HASS_API(HASS_TOKEN).get_state("sensor.atc_52df_temperature") 
+        label(self, QPainter(self), ui.label_TNUM1).draw_str(
+            str_temp, Color_tmp_outside, 40, offset_y=-25
+        )
+        label(self, QPainter(self), ui.label_chart1).add_chart_line(
+            HASS_API(HASS_TOKEN).get_hsitory_yesterday("sensor.atc_52df_temperature"),
+            Color_tmp_outside_dim,
+            0,
+            50,
+        )
+        label(self, QPainter(self), ui.label_chart1).add_chart_line(
+            HASS_API(HASS_TOKEN).get_hsitory_today("sensor.atc_52df_temperature"),
+            Color_tmp_outside,
+            0,
+            50,
+        )
+        label(self, QPainter(self), ui.label_chart1).draw_frame(Color_up_str)
 
-            else:
-                str_temp += "🌡--"
-
-            label(self, QPainter(self), ui.label_chart).add_chart_line(
-                s_home_temp.get_min15_today(), Color_tmp_outside
-            )
-            label(self, QPainter(self), ui.label_TNUM1).draw_str(
-                str_temp, Color_tmp_outside, 40
-            )
-
-        s_home_humi = xiaomi_temp.humidity("9e8b")
-        if s_home_humi != None:
-            str_humi = ""
-            if s_home_humi.is_update_in_30s():
-                str_humi += "🩸" + s_home_humi.get_last_value()
-            else:
-                str_humi += "🩸--"
-            label(self, QPainter(self), ui.label_HNUM1).draw_str(
-                str_humi, Color_tmp_outside, 40
-            )
+        # 显示室外湿度
+        str_humi = "🩸"+ HASS_API(HASS_TOKEN).get_state("sensor.atc_52df_humidity") 
+        label(self, QPainter(self), ui.label_HNUM1).draw_str(
+            str_humi, Color_tmp_outside, 40, offset_y=-25
+        )
+        label(self, QPainter(self), ui.label_chart2).add_chart_line(
+            HASS_API(HASS_TOKEN).get_hsitory_today("sensor.atc_52df_humidity"),
+            Color_tmp_outside,
+            0,
+            100,
+        )
+        label(self, QPainter(self), ui.label_chart2).add_chart_line(
+            HASS_API(HASS_TOKEN).get_hsitory_yesterday("sensor.atc_52df_humidity"),
+            Color_tmp_outside_dim,
+            0,
+            100,
+        )
+        label(self, QPainter(self), ui.label_chart2).draw_frame(Color_up_str)
 
         label(self, QPainter(self), ui.label_STR1).draw_str(
             "室外", Color_str, 50, offset_x=-60
