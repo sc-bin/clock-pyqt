@@ -42,7 +42,7 @@
     <property name="geometry">
      <rect>
       <x>1010</x>
-      <y>20</y>
+      <y>10</y>
       <width>300</width>
       <height>150</height>
      </rect>
@@ -66,7 +66,7 @@
     <property name="geometry">
      <rect>
       <x>1010</x>
-      <y>380</y>
+      <y>350</y>
       <width>300</width>
       <height>150</height>
      </rect>
@@ -90,7 +90,7 @@
     <property name="geometry">
      <rect>
       <x>1010</x>
-      <y>700</y>
+      <y>690</y>
       <width>300</width>
       <height>150</height>
      </rect>
@@ -114,7 +114,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>130</y>
+      <y>120</y>
       <width>200</width>
       <height>100</height>
      </rect>
@@ -138,7 +138,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>800</y>
+      <y>790</y>
       <width>200</width>
       <height>100</height>
      </rect>
@@ -162,7 +162,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>480</y>
+      <y>450</y>
       <width>200</width>
       <height>100</height>
      </rect>
@@ -186,7 +186,7 @@
     <property name="geometry">
      <rect>
       <x>1320</x>
-      <y>20</y>
+      <y>10</y>
       <width>580</width>
       <height>150</height>
      </rect>
@@ -210,7 +210,7 @@
     <property name="geometry">
      <rect>
       <x>1570</x>
-      <y>810</y>
+      <y>800</y>
       <width>200</width>
       <height>100</height>
      </rect>
@@ -234,7 +234,7 @@
     <property name="geometry">
      <rect>
       <x>1370</x>
-      <y>810</y>
+      <y>800</y>
       <width>200</width>
       <height>100</height>
      </rect>
@@ -282,7 +282,7 @@
     <property name="geometry">
      <rect>
       <x>1010</x>
-      <y>180</y>
+      <y>170</y>
       <width>300</width>
       <height>150</height>
      </rect>
@@ -306,7 +306,7 @@
     <property name="geometry">
      <rect>
       <x>1010</x>
-      <y>540</y>
+      <y>510</y>
       <width>300</width>
       <height>150</height>
      </rect>
@@ -354,7 +354,7 @@
     <property name="geometry">
      <rect>
       <x>1320</x>
-      <y>180</y>
+      <y>170</y>
       <width>580</width>
       <height>150</height>
      </rect>
@@ -378,7 +378,7 @@
     <property name="geometry">
      <rect>
       <x>1320</x>
-      <y>380</y>
+      <y>350</y>
       <width>580</width>
       <height>150</height>
      </rect>
@@ -402,7 +402,7 @@
     <property name="geometry">
      <rect>
       <x>1320</x>
-      <y>540</y>
+      <y>510</y>
       <width>580</width>
       <height>150</height>
      </rect>
@@ -422,6 +422,98 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="label_FRAME_1">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>10</y>
+      <width>1091</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>27</pointsize>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_FRAME_2">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>350</y>
+      <width>1091</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>27</pointsize>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_FRAME_3">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>690</y>
+      <width>501</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>27</pointsize>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <zorder>label_FRAME_3</zorder>
+   <zorder>label_FRAME_2</zorder>
+   <zorder>label_FRAME_1</zorder>
+   <zorder>label_clock</zorder>
+   <zorder>label_TNUM1</zorder>
+   <zorder>label_TNUM2</zorder>
+   <zorder>label_TNUM3</zorder>
+   <zorder>label_STR1</zorder>
+   <zorder>label_STR3</zorder>
+   <zorder>label_STR2</zorder>
+   <zorder>label_chart1</zorder>
+   <zorder>label_up_fans</zorder>
+   <zorder>label_STR4</zorder>
+   <zorder>label_clock_num</zorder>
+   <zorder>label_HNUM1</zorder>
+   <zorder>label_HNUM2</zorder>
+   <zorder>label_HNUM3</zorder>
+   <zorder>label_chart2</zorder>
+   <zorder>label_chart3</zorder>
+   <zorder>label_chart4</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -39,6 +39,7 @@ ui = page.Ui_MainWindow()
 QCursor.setPos(QtWidgets.QApplication.instance().desktop().screen().rect().center())
 app.setOverrideCursor(Qt.BlankCursor)
 
+
 class my_window(QtWidgets.QMainWindow):
     def paintEvent(self, event):
         # print("paintEvent")
