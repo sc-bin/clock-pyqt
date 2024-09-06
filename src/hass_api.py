@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 from numpy import *
 
+HISTORY_DATA = {"0": [0]}
+
 
 class HASS_API:
     """
@@ -57,11 +59,17 @@ class HASS_API:
         if start_time != "":
             start_time = "/" + start_time
 
+        # 减少重复查询
+        data_key = f"{entity_id}-{start_time}-{end_time}"
+        if data_key in HISTORY_DATA.keys():
+            return HISTORY_DATA[data_key]
+
         para = {"filter_entity_id": entity_id, "end_time": end_time}
         para = urlencode(para)
         history = self._get_json(
             "history/period" + start_time + "?" + para + "&minimal_response"
         )
+        HISTORY_DATA[data_key] = history
         return history
 
     def get_hsitory_in_1min(self, entity_id: str, time: str) -> list:
@@ -132,6 +140,7 @@ class HASS_API:
         yesterday_midnight = now - timedelta(days=1)
         formatted_time = yesterday_midnight.strftime("%Y-%m-%d")
         return self._get_hsitory_one_day_all_minuter(entity_id, formatted_time)
+
     def get_hsitory_today(self, entity_id: str) -> list:
         """
         返回一个列表，对应今天一天每分钟的平均值,仅支持数值类型的实体
