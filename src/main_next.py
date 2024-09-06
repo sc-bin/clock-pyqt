@@ -86,7 +86,7 @@ class my_window(QtWidgets.QMainWindow):
             "卧室", Color_SENSER_DESC, 50, offset_x=-60
         )
         label(self, QPainter(self), ui.label_STR3).draw_str(
-            "电脑", Color_SENSER_DESC, 50, offset_x=-60
+            "客厅", Color_SENSER_DESC, 50, offset_x=-60
         )
         label(self, QPainter(self), ui.label_FRAME_1).draw_frame(
             Color_SENSER_CHART_FRAME
@@ -105,9 +105,11 @@ class my_window(QtWidgets.QMainWindow):
         )
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_TEMP)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_TEMP)
-        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        y_min = int(min(non_zero_values))
-        y_max = int(max(non_zero_values) + 1)
+        y_min = 0
+        y_max = 50
+        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        # y_min = int(min(non_zero_values))
+        # y_max = int(max(non_zero_values) + 1)
         label(self, QPainter(self), ui.label_chart1).add_chart_line(
             data_yesterday,
             Color_SENSER_CHART_FRAME,
@@ -132,9 +134,11 @@ class my_window(QtWidgets.QMainWindow):
         )
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_HUMI)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_HUMI)
-        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        y_min = int(min(non_zero_values))
-        y_max = int(max(non_zero_values) + 1)
+        y_min = 0
+        y_max = 100
+        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        # y_min = int(min(non_zero_values))
+        # y_max = int(max(non_zero_values) + 1)
         label(self, QPainter(self), ui.label_chart2).add_chart_line(
             data_today,
             Color_SENSER_HUMI,
@@ -159,9 +163,11 @@ class my_window(QtWidgets.QMainWindow):
         )
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_TEMP)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_TEMP)
-        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        y_min = int(min(non_zero_values))
-        y_max = int(max(non_zero_values) + 1)
+        y_min = 0
+        y_max = 50
+        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        # y_min = int(min(non_zero_values))
+        # y_max = int(max(non_zero_values) + 1)
         label(self, QPainter(self), ui.label_chart3).add_chart_line(
             data_yesterday,
             Color_SENSER_CHART_FRAME,
@@ -186,9 +192,11 @@ class my_window(QtWidgets.QMainWindow):
         )
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_HUMI)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_HUMI)
-        non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        y_min = int(min(non_zero_values))
-        y_max = int(max(non_zero_values) + 1)
+        y_min = 0
+        y_max = 100
+        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
+        # y_min = int(min(non_zero_values))
+        # y_max = int(max(non_zero_values) + 1)
         label(self, QPainter(self), ui.label_chart4).add_chart_line(
             data_today,
             Color_SENSER_HUMI,
@@ -206,13 +214,13 @@ class my_window(QtWidgets.QMainWindow):
             Color_SENSER_CHART_FRAME
         )
 
-        # 显示电脑旁温度
+        # 显示客厅温度
         str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_TEMP)
         label(self, QPainter(self), ui.label_TNUM3).draw_str(
             str_temp, Color_SENSER_TEMP, 40, offset_y=-25
         )
 
-        # 显示电脑旁湿度
+        # 显示客厅湿度
         str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_HUMI)
         label(self, QPainter(self), ui.label_HNUM3).draw_str(
             str_humi, Color_SENSER_HUMI, 40, offset_y=-25
