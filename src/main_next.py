@@ -41,7 +41,6 @@ from draw_label import label
 from hass_api import *
 from spider_bilibili import bilibili
 
-Color_SENSER_DESC = QColor(130, 130, 80, 200)
 Color_SENSER_TEMP = QColor(100, 230, 100, 200)
 Color_SENSER_HUMI = QColor(65, 250, 250, 200)
 Color_SENSER_CHART_FRAME = QColor(255, 230, 230, 150)
@@ -55,6 +54,12 @@ ui = page.Ui_MainWindow()
 # 设置鼠标指针为隐藏
 QCursor.setPos(QtWidgets.QApplication.instance().desktop().screen().rect().center())
 app.setOverrideCursor(Qt.BlankCursor)
+
+font_id = QFontDatabase.addApplicationFont("SEGUIEMJ.TTF")
+font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+print(f"字体名称为{font_family}")
+font = QFont(font_family)
+app.setFont(font)
 
 
 def chart_calculate(list1: list, list2=[]):
@@ -75,19 +80,8 @@ class my_window(QtWidgets.QMainWindow):
         draw_clock(self, QPainter(self), ui.label_clock)
         now = datetime.now()
         formatted_time = now.strftime("%H:%M")
-        label(self, QPainter(self), ui.label_clock_num).draw_str(
-            formatted_time, QColor(255, 120, 0, 200), 50, offset_x=-90
-        )
-        label(self, QPainter(self), ui.label_STR1).draw_str(
-            "室外", Color_SENSER_DESC, 50, offset_x=-60
-        )
+        ui.label_clock_num.setText(formatted_time)
 
-        label(self, QPainter(self), ui.label_STR2).draw_str(
-            "卧室", Color_SENSER_DESC, 50, offset_x=-60
-        )
-        label(self, QPainter(self), ui.label_STR3).draw_str(
-            "客厅", Color_SENSER_DESC, 50, offset_x=-60
-        )
         label(self, QPainter(self), ui.label_FRAME_1).draw_frame(
             Color_SENSER_CHART_FRAME
         )
@@ -100,9 +94,8 @@ class my_window(QtWidgets.QMainWindow):
 
         # 显示室外温度
         str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_OUT_TEMP)
-        label(self, QPainter(self), ui.label_TNUM1).draw_str(
-            str_temp, Color_SENSER_TEMP, 40, offset_y=-25
-        )
+        ui.label_TNUM_1.setText(str_temp)
+
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_TEMP)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_TEMP)
         y_min = 0
@@ -128,10 +121,9 @@ class my_window(QtWidgets.QMainWindow):
         )
 
         # 显示室外湿度
-        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_OUT_HUMI)
-        label(self, QPainter(self), ui.label_HNUM1).draw_str(
-            str_humi, Color_SENSER_HUMI, 40, offset_y=-25
-        )
+        str_humi = "💧" + HASS_API(HASS_TOKEN).get_state(ID_OUT_HUMI)
+        ui.label_HNUM_1.setText(str_humi)
+
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_HUMI)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_HUMI)
         y_min = 0
@@ -158,9 +150,8 @@ class my_window(QtWidgets.QMainWindow):
 
         # 显示卧室温度
         str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_TEMP)
-        label(self, QPainter(self), ui.label_TNUM2).draw_str(
-            str_temp, Color_SENSER_TEMP, 40, offset_y=-25
-        )
+        ui.label_TNUM_2.setText(str_temp)
+
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_TEMP)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_TEMP)
         y_min = 0
@@ -187,9 +178,8 @@ class my_window(QtWidgets.QMainWindow):
 
         # 显示室外湿度
         str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_HUMI)
-        label(self, QPainter(self), ui.label_HNUM2).draw_str(
-            str_humi, Color_SENSER_HUMI, 40, offset_y=-25
-        )
+        ui.label_HNUM_2.setText(str_humi)
+
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_HUMI)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_HUMI)
         y_min = 0
@@ -216,15 +206,11 @@ class my_window(QtWidgets.QMainWindow):
 
         # 显示客厅温度
         str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_TEMP)
-        label(self, QPainter(self), ui.label_TNUM3).draw_str(
-            str_temp, Color_SENSER_TEMP, 40, offset_y=-25
-        )
+        ui.label_TNUM_3.setText(str_temp)
 
         # 显示客厅湿度
         str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_HUMI)
-        label(self, QPainter(self), ui.label_HNUM3).draw_str(
-            str_humi, Color_SENSER_HUMI, 40, offset_y=-25
-        )
+        ui.label_HNUM_3.setText(str_humi)
 
         # 显示粉丝数
         label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str, 50)

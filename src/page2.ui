@@ -6,12 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1920</width>
+    <width>1953</width>
     <height>1080</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Segoe UI Emoji</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label_clock">
@@ -25,158 +33,18 @@
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>87</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0)</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Panel</enum>
     </property>
     <property name="text">
-     <string>时钟</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_TNUM1">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>10</y>
-      <width>300</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>温度1</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_TNUM2">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>350</y>
-      <width>300</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>28</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>温度2</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_TNUM3">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>690</y>
-      <width>300</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>温度3</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_STR1">
-    <property name="geometry">
-     <rect>
-      <x>810</x>
-      <y>120</y>
-      <width>200</width>
-      <height>100</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>标识1</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_STR3">
-    <property name="geometry">
-     <rect>
-      <x>810</x>
-      <y>790</y>
-      <width>200</width>
-      <height>100</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>标识3</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_STR2">
-    <property name="geometry">
-     <rect>
-      <x>810</x>
-      <y>450</y>
-      <width>200</width>
-      <height>100</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>标识2</string>
+     <string>圆形时钟</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -193,6 +61,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>27</pointsize>
      </font>
     </property>
@@ -209,14 +78,15 @@
    <widget class="QLabel" name="label_up_fans">
     <property name="geometry">
      <rect>
-      <x>1570</x>
-      <y>800</y>
+      <x>1590</x>
+      <y>900</y>
       <width>200</width>
       <height>100</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>27</pointsize>
      </font>
     </property>
@@ -233,14 +103,15 @@
    <widget class="QLabel" name="label_STR4">
     <property name="geometry">
      <rect>
-      <x>1370</x>
-      <y>800</y>
+      <x>1390</x>
+      <y>900</y>
       <width>200</width>
       <height>100</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>27</pointsize>
      </font>
     </property>
@@ -265,86 +136,18 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>27</pointsize>
+      <family>Segoe UI Emoji</family>
+      <pointsize>116</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:rgb(255, 208, 39)</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Box</enum>
     </property>
     <property name="text">
-     <string>数字时钟</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_HNUM1">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>170</y>
-      <width>300</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>湿度1</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_HNUM2">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>510</y>
-      <width>300</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>湿度2</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_HNUM3">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>850</y>
-      <width>300</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>湿度3</string>
+     <string>20:45</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -361,6 +164,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>27</pointsize>
      </font>
     </property>
@@ -369,54 +173,6 @@
     </property>
     <property name="text">
      <string>图表2_室外湿度</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_chart3">
-    <property name="geometry">
-     <rect>
-      <x>1320</x>
-      <y>350</y>
-      <width>580</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>图表3_卧室温度</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_chart4">
-    <property name="geometry">
-     <rect>
-      <x>1320</x>
-      <y>510</y>
-      <width>580</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>27</pointsize>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string>图表4_卧室湿度</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -433,6 +189,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>27</pointsize>
      </font>
     </property>
@@ -457,6 +214,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>27</pointsize>
      </font>
     </property>
@@ -481,6 +239,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI Emoji</family>
       <pointsize>27</pointsize>
      </font>
     </property>
@@ -494,33 +253,332 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="label_STR3">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>690</y>
+      <width>161</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI Emoji</family>
+      <pointsize>27</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #828250;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="text">
+     <string>客厅</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_chart3">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>350</y>
+      <width>579</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI Emoji</family>
+      <pointsize>27</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #828250;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="text">
+     <string>图表3_卧室温度</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_chart4">
+    <property name="geometry">
+     <rect>
+      <x>1320</x>
+      <y>540</y>
+      <width>531</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI Emoji</family>
+      <pointsize>27</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #828250;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="text">
+     <string>图表4_卧室湿度</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>690</y>
+      <width>301</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_TNUM_3">
+       <property name="font">
+        <font>
+         <family>Segoe UI Emoji</family>
+         <pointsize>38</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #64e664;</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string> 🌡22.2</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_HNUM_3">
+       <property name="font">
+        <font>
+         <family>Segoe UI Emoji</family>
+         <pointsize>38</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #41fafa;</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>💧66.6</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>10</y>
+      <width>481</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_1">
+     <item>
+      <widget class="QLabel" name="label_STR_1">
+       <property name="font">
+        <font>
+         <family>Segoe UI Emoji</family>
+         <pointsize>27</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #828250;</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="text">
+        <string>室外</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label_TNUM_1">
+         <property name="font">
+          <font>
+           <family>Segoe UI Emoji</family>
+           <pointsize>38</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #64e664;</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="text">
+          <string> 🌡22.2</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_HNUM_1">
+         <property name="font">
+          <font>
+           <family>Segoe UI Emoji</family>
+           <pointsize>38</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #41fafa;</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="text">
+          <string>💧66.6</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>350</y>
+      <width>481</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_STR_2">
+       <property name="font">
+        <font>
+         <family>Segoe UI Emoji</family>
+         <pointsize>27</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #828250;</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="text">
+        <string>卧室</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_TNUM_2">
+         <property name="font">
+          <font>
+           <family>Segoe UI Emoji</family>
+           <pointsize>38</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #64e664;</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="text">
+          <string> 🌡22.2</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_HNUM_2">
+         <property name="font">
+          <font>
+           <family>Segoe UI Emoji</family>
+           <pointsize>38</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #41fafa;</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="text">
+          <string>💧66.6</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <zorder>label_FRAME_1</zorder>
    <zorder>label_FRAME_3</zorder>
    <zorder>label_FRAME_2</zorder>
-   <zorder>label_FRAME_1</zorder>
    <zorder>label_clock</zorder>
-   <zorder>label_TNUM1</zorder>
-   <zorder>label_TNUM2</zorder>
-   <zorder>label_TNUM3</zorder>
-   <zorder>label_STR1</zorder>
-   <zorder>label_STR3</zorder>
-   <zorder>label_STR2</zorder>
    <zorder>label_chart1</zorder>
    <zorder>label_up_fans</zorder>
    <zorder>label_STR4</zorder>
    <zorder>label_clock_num</zorder>
-   <zorder>label_HNUM1</zorder>
-   <zorder>label_HNUM2</zorder>
-   <zorder>label_HNUM3</zorder>
    <zorder>label_chart2</zorder>
+   <zorder>label_STR3</zorder>
    <zorder>label_chart3</zorder>
    <zorder>label_chart4</zorder>
+   <zorder>verticalLayoutWidget_3</zorder>
+   <zorder>horizontalLayoutWidget</zorder>
+   <zorder>horizontalLayoutWidget_2</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1920</width>
+     <width>1953</width>
      <height>26</height>
     </rect>
    </property>
