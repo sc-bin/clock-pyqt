@@ -2,18 +2,12 @@ HASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTllODM4YTI2OWI0Y
 TEST_TEMP = "sensor.temperature_humidity_sensor_9e8b_temperature"
 TEST_HUMI = "sensor.temperature_humidity_sensor_9e8b_humidity"
 
-ID_OUT_TEMP = TEST_TEMP
-ID_OUT_HUMI = TEST_HUMI
+ID_OUTSIDE_TEMP = TEST_TEMP
+ID_OUTSIDE_HUMI = TEST_HUMI
+ID_ROOM_TEMP = TEST_TEMP
+ID_ROOM_HUMI = TEST_HUMI
 ID_BEDROOM_TEMP = TEST_TEMP
 ID_BEDROOM_HUMI = TEST_HUMI
-ID_COMPUTER_TEMP = TEST_TEMP
-ID_COMPUTER_HUMI = TEST_HUMI
-# ID_OUT_TEMP = "sensor.atc_52df_temperature"
-# ID_OUT_HUMI = "sensor.atc_52df_humidity"
-# ID_BEDROOM_TEMP = "sensor.atc_52df_temperature"
-# ID_BEDROOM_HUMI = "sensor.atc_52df_humidity"
-# ID_COMPUTER_TEMP = "sensor.atc_52df_temperature"
-# ID_COMPUTER_HUMI = "sensor.atc_52df_humidity"
 
 import sys
 import threading
@@ -41,9 +35,9 @@ from draw_label import label
 from hass_api import *
 from spider_bilibili import bilibili
 
-Color_SENSER_TEMP = QColor(100, 230, 100, 200)
-Color_SENSER_HUMI = QColor(65, 250, 250, 200)
-Color_SENSER_CHART_FRAME = QColor(255, 230, 230, 150)
+Color_TEMP = QColor(100, 230, 100, 200)
+Color_HUMI = QColor(65, 250, 250, 200)
+Color_CHART_FRAME = QColor(255, 230, 230, 150)
 
 Color_up_str = QColor(255, 100, 150, 150)
 Color_up_num = QColor(255, 230, 230, 150)
@@ -62,15 +56,77 @@ font = QFont(font_family)
 app.setFont(font)
 
 
-def chart_calculate(list1: list, list2=[]):
-    """
-    供绘制折线图使用,最多传入两个list,返回合适显示的y轴最小值与最大值
-    """
-    y_min = 0
-    y_max = 0
-    list_all = list1 + list2
+class ChartLabel(QtWidgets.QLabel):
+    entity: str
+    color_main: QColor
+    color_back: QColor
+    y_min: int
+    y_max: int
 
-    return (max(list_all) * 1.2,)
+    def __init__(
+        self,
+        parent: QtWidgets.QLabel,
+        entity_id: str,
+        color_main_line: QColor,
+        color_background_line: QColor,
+        y_min=0,
+        y_max=50,
+    ):
+        """
+        在label上绘制图表的类
+            @parent: 继承父label,使用其尺寸及位置
+            @entity_id: 实体id,准备在这个图标中显示的
+            @color_main_line: 今日数据的线条颜色
+            @color_background_line: 昨日数据的线条颜色
+            @y_min: y轴刻度起始
+            @y_max: y轴刻度最大值
+        """
+        super(ChartLabel, self).__init__(parent)
+        self.resize(parent.width(), parent.height())
+        parent.setText("")
+        self.entity = entity_id
+        self.color_main = color_main_line
+        self.color_back = color_background_line
+        self.y_min = y_min
+        self.y_max = y_max
+
+        self.timer = QTimer()  # 定时器
+        self.timer.timeout.connect(self.update)
+        self.timer.start(1000)  # 每1s 更新一次
+
+    def draw_chart_line(self, data: list, color: QColor):
+        """
+        利用传入的数据，绘制折线图
+        @data: 数据列表
+        @color: 线条颜色
+        """
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)  # 设置抗锯齿
+        painter.save()
+        painter.setPen(color)
+        painter.translate(self.pos().x(), self.pos().y() + self.height())
+        painter.scale(self.width() / len(data), 1)
+        y_scale = self.height() / (self.y_max - self.y_min)
+        path = QPainterPath()
+        path.moveTo(0, 0)
+        for i in range(len(data)):
+            if data[i] == 0:
+                path.lineTo(i, 0)
+            else:
+                path.lineTo(i, -((data[i] - self.y_min)) * y_scale)
+        painter.drawPath(path)
+
+        painter.restore()
+
+    def paintEvent(self, event):
+        # print("重绘")
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)  # 设置抗锯齿
+
+        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(self.entity)
+        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(self.entity)
+        self.draw_chart_line(data_yesterday, self.color_back)
+        self.draw_chart_line(data_today, self.color_main)
 
 
 class my_window(QtWidgets.QMainWindow):
@@ -82,134 +138,32 @@ class my_window(QtWidgets.QMainWindow):
         formatted_time = now.strftime("%H:%M")
         ui.label_clock_num.setText(formatted_time)
 
-        label(self, QPainter(self), ui.label_FRAME_1).draw_frame(
-            Color_SENSER_CHART_FRAME
-        )
-        label(self, QPainter(self), ui.label_FRAME_2).draw_frame(
-            Color_SENSER_CHART_FRAME
-        )
-        label(self, QPainter(self), ui.label_FRAME_3).draw_frame(
-            Color_SENSER_CHART_FRAME
-        )
+        label(self, QPainter(self), ui.label_FRAME_1).draw_frame(Color_CHART_FRAME)
+        label(self, QPainter(self), ui.label_FRAME_2).draw_frame(Color_CHART_FRAME)
+        label(self, QPainter(self), ui.label_FRAME_3).draw_frame(Color_CHART_FRAME)
 
         # 显示室外温度
-        str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_OUT_TEMP)
+        str_temp = "🌡" + HASS_API(HASS_TOKEN).get_state(ID_OUTSIDE_TEMP)
         ui.label_TNUM_1.setText(str_temp)
 
-        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_TEMP)
-        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_TEMP)
-        y_min = 0
-        y_max = 50
-        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        # y_min = int(min(non_zero_values))
-        # y_max = int(max(non_zero_values) + 1)
-        label(self, QPainter(self), ui.label_chart1).add_chart_line(
-            data_yesterday,
-            Color_SENSER_CHART_FRAME,
-            y_min,
-            y_max,
-        )
-        label(self, QPainter(self), ui.label_chart1).add_chart_line(
-            data_today,
-            Color_SENSER_TEMP,
-            y_min,
-            y_max,
-            show_dial=True,
-        )
-        label(self, QPainter(self), ui.label_chart1).draw_frame(
-            Color_SENSER_CHART_FRAME
-        )
-
         # 显示室外湿度
-        str_humi = "💧" + HASS_API(HASS_TOKEN).get_state(ID_OUT_HUMI)
+        str_humi = "💧" + HASS_API(HASS_TOKEN).get_state(ID_OUTSIDE_HUMI)
         ui.label_HNUM_1.setText(str_humi)
 
-        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_OUT_HUMI)
-        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_OUT_HUMI)
-        y_min = 0
-        y_max = 100
-        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        # y_min = int(min(non_zero_values))
-        # y_max = int(max(non_zero_values) + 1)
-        label(self, QPainter(self), ui.label_chart2).add_chart_line(
-            data_today,
-            Color_SENSER_HUMI,
-            y_min,
-            y_max,
-            show_dial=True,
-        )
-        label(self, QPainter(self), ui.label_chart2).add_chart_line(
-            data_yesterday,
-            Color_SENSER_CHART_FRAME,
-            y_min,
-            y_max,
-        )
-        label(self, QPainter(self), ui.label_chart2).draw_frame(
-            Color_SENSER_CHART_FRAME
-        )
-
         # 显示卧室温度
-        str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_TEMP)
+        str_temp = "🌡" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_TEMP)
         ui.label_TNUM_2.setText(str_temp)
-
-        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_TEMP)
-        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_TEMP)
-        y_min = 0
-        y_max = 50
-        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        # y_min = int(min(non_zero_values))
-        # y_max = int(max(non_zero_values) + 1)
-        label(self, QPainter(self), ui.label_chart3).add_chart_line(
-            data_yesterday,
-            Color_SENSER_CHART_FRAME,
-            y_min,
-            y_max,
-        )
-        label(self, QPainter(self), ui.label_chart3).add_chart_line(
-            data_today,
-            Color_SENSER_TEMP,
-            y_min,
-            y_max,
-            show_dial=True,
-        )
-        label(self, QPainter(self), ui.label_chart3).draw_frame(
-            Color_SENSER_CHART_FRAME
-        )
 
         # 显示室外湿度
         str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_HUMI)
         ui.label_HNUM_2.setText(str_humi)
 
-        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(ID_BEDROOM_HUMI)
-        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(ID_BEDROOM_HUMI)
-        y_min = 0
-        y_max = 100
-        # non_zero_values = [x for x in data_yesterday + data_today if x != 0]
-        # y_min = int(min(non_zero_values))
-        # y_max = int(max(non_zero_values) + 1)
-        label(self, QPainter(self), ui.label_chart4).add_chart_line(
-            data_today,
-            Color_SENSER_HUMI,
-            y_min,
-            y_max,
-            show_dial=True,
-        )
-        label(self, QPainter(self), ui.label_chart4).add_chart_line(
-            data_yesterday,
-            Color_SENSER_CHART_FRAME,
-            y_min,
-            y_max,
-        )
-        label(self, QPainter(self), ui.label_chart4).draw_frame(
-            Color_SENSER_CHART_FRAME
-        )
-
         # 显示客厅温度
-        str_temp = " 🌡" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_TEMP)
+        str_temp = "🌡" + HASS_API(HASS_TOKEN).get_state(ID_ROOM_TEMP)
         ui.label_TNUM_3.setText(str_temp)
 
         # 显示客厅湿度
-        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_COMPUTER_HUMI)
+        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_ROOM_HUMI)
         ui.label_HNUM_3.setText(str_humi)
 
         # 显示粉丝数
@@ -226,6 +180,10 @@ class my_window(QtWidgets.QMainWindow):
 window = my_window()
 ui.setupUi(window)
 
+ChartLabel(ui.label_chartT_1, ID_OUTSIDE_TEMP, Color_TEMP, Color_CHART_FRAME)
+ChartLabel(ui.label_chartH_1, ID_OUTSIDE_HUMI, Color_TEMP, Color_CHART_FRAME, 0, 100)
+ChartLabel(ui.label_chartT_2, ID_BEDROOM_TEMP, Color_TEMP, Color_CHART_FRAME)
+ChartLabel(ui.label_chartH_2, ID_BEDROOM_HUMI, Color_TEMP, Color_CHART_FRAME, 0, 100)
 
 # 背景设置黑色
 pal = QPalette(window.palette())
