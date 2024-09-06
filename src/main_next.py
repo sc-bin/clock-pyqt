@@ -35,13 +35,6 @@ from draw_label import label
 from hass_api import *
 from spider_bilibili import bilibili
 
-Color_TEMP = QColor(100, 230, 100, 200)
-Color_HUMI = QColor(65, 250, 250, 200)
-Color_CHART_FRAME = QColor(255, 230, 230, 150)
-
-Color_up_str = QColor(255, 100, 150, 150)
-Color_up_num = QColor(255, 230, 230, 150)
-
 app = QtWidgets.QApplication(sys.argv)
 ui = page.Ui_MainWindow()
 
@@ -59,7 +52,6 @@ app.setFont(font)
 class ChartLabel(QtWidgets.QLabel):
     entity: str
     color_main: QColor
-    color_back: QColor
     y_min: int
     y_max: int
 
@@ -68,7 +60,6 @@ class ChartLabel(QtWidgets.QLabel):
         parent: QtWidgets.QLabel,
         entity_id: str,
         color_main_line: QColor,
-        color_background_line: QColor,
         y_min=0,
         y_max=50,
     ):
@@ -77,7 +68,6 @@ class ChartLabel(QtWidgets.QLabel):
             @parent: 继承父label,使用其尺寸及位置
             @entity_id: 实体id,准备在这个图标中显示的
             @color_main_line: 今日数据的线条颜色
-            @color_background_line: 昨日数据的线条颜色
             @y_min: y轴刻度起始
             @y_max: y轴刻度最大值
         """
@@ -86,7 +76,6 @@ class ChartLabel(QtWidgets.QLabel):
         parent.setText("")
         self.entity = entity_id
         self.color_main = color_main_line
-        self.color_back = color_background_line
         self.y_min = y_min
         self.y_max = y_max
 
@@ -94,7 +83,7 @@ class ChartLabel(QtWidgets.QLabel):
         self.timer.timeout.connect(self.update)
         self.timer.start(1000)  # 每1s 更新一次
 
-    def draw_chart_line(self, data: list, color: QColor):
+    def draw_chart_line(self, data: list, color=None):
         """
         利用传入的数据，绘制折线图
         @data: 数据列表
@@ -103,7 +92,8 @@ class ChartLabel(QtWidgets.QLabel):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)  # 设置抗锯齿
         painter.save()
-        painter.setPen(color)
+        if color != None:
+            painter.setPen(color)
         painter.translate(self.pos().x(), self.pos().y() + self.height())
         painter.scale(self.width() / len(data), 1)
         y_scale = self.height() / (self.y_max - self.y_min)
@@ -125,7 +115,7 @@ class ChartLabel(QtWidgets.QLabel):
 
         data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(self.entity)
         data_today = HASS_API(HASS_TOKEN).get_hsitory_today(self.entity)
-        self.draw_chart_line(data_yesterday, self.color_back)
+        self.draw_chart_line(data_yesterday)
         self.draw_chart_line(data_today, self.color_main)
 
 
@@ -137,10 +127,6 @@ class my_window(QtWidgets.QMainWindow):
         now = datetime.now()
         formatted_time = now.strftime("%H:%M")
         ui.label_clock_num.setText(formatted_time)
-
-        label(self, QPainter(self), ui.label_FRAME_1).draw_frame(Color_CHART_FRAME)
-        label(self, QPainter(self), ui.label_FRAME_2).draw_frame(Color_CHART_FRAME)
-        label(self, QPainter(self), ui.label_FRAME_3).draw_frame(Color_CHART_FRAME)
 
         # 显示室外温度
         str_temp = "🌡" + HASS_API(HASS_TOKEN).get_state(ID_OUTSIDE_TEMP)
@@ -167,10 +153,7 @@ class my_window(QtWidgets.QMainWindow):
         ui.label_HNUM_3.setText(str_humi)
 
         # 显示粉丝数
-        label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str, 50)
-        label(self, QPainter(self), ui.label_up_fans).draw_str(
-            str(bilibili.fans), Color_up_num, 50
-        )
+        ui.label_up_fans.setText(str(bilibili.fans))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -180,15 +163,19 @@ class my_window(QtWidgets.QMainWindow):
 window = my_window()
 ui.setupUi(window)
 
-ChartLabel(ui.label_chartT_1, ID_OUTSIDE_TEMP, Color_TEMP, Color_CHART_FRAME)
-ChartLabel(ui.label_chartH_1, ID_OUTSIDE_HUMI, Color_TEMP, Color_CHART_FRAME, 0, 100)
-ChartLabel(ui.label_chartT_2, ID_BEDROOM_TEMP, Color_TEMP, Color_CHART_FRAME)
-ChartLabel(ui.label_chartH_2, ID_BEDROOM_HUMI, Color_TEMP, Color_CHART_FRAME, 0, 100)
+COLOR_T1 = ui.label_TNUM_1.palette().color(QPalette.WindowText)
+COLOR_T2 = ui.label_TNUM_2.palette().color(QPalette.WindowText)
+COLOR_H1 = ui.label_HNUM_1.palette().color(QPalette.WindowText)
+COLOR_H2 = ui.label_HNUM_2.palette().color(QPalette.WindowText)
+ChartLabel(ui.label_chartT_1, ID_OUTSIDE_TEMP, COLOR_T1)
+ChartLabel(ui.label_chartH_1, ID_OUTSIDE_HUMI, COLOR_H1, 0, 100)
+ChartLabel(ui.label_chartT_2, ID_BEDROOM_TEMP, COLOR_T2)
+ChartLabel(ui.label_chartH_2, ID_BEDROOM_HUMI, COLOR_H2, 0, 100)
 
-# 背景设置黑色
-pal = QPalette(window.palette())
-pal.setColor(QPalette.ColorRole.Background, QColor(Qt.GlobalColor.black))
-window.setPalette(pal)
+# # 背景设置黑色
+# pal = QPalette(window.palette())
+# pal.setColor(QPalette.ColorRole.Background, QColor(Qt.GlobalColor.black))
+# window.setPalette(pal)
 
 # 定时触发重绘
 window.timer = QTimer()  # 定时器
