@@ -113,15 +113,16 @@ class HASS_API:
         history = self.get_hsitory(entity_id, time_start, time_end)
 
         data = [[] for _ in range(24 * 60)]
-        for item in history[0]:
-            state = item["state"]
-            timestamp = item["last_changed"]
-            timestamp_east_eight = convert_to_east_eight(timestamp)  # 转换为东8区时间
-            minute_of_day = timestamp_east_eight.hour * 60 + timestamp_east_eight.minute
-            try:
-                data[minute_of_day].append(float(state))
-            except:
-                pass
+        if len(history) > 0:
+            for item in history[0]:
+                state = item["state"]
+                timestamp = item["last_changed"]
+                timestamp_east_eight = convert_to_east_eight(timestamp)  # 转换为东8区时间
+                minute_of_day = timestamp_east_eight.hour * 60 + timestamp_east_eight.minute
+                try:
+                    data[minute_of_day].append(float(state))
+                except:
+                    pass
         data_average = []
         for i in data:
             if i.__len__() > 0:

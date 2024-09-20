@@ -1,13 +1,11 @@
-HASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTllODM4YTI2OWI0YjNlOWE5NzQ2Nzc2MDc3N2Y2MSIsImlhdCI6MTcyNDkxMTY0OSwiZXhwIjoyMDQwMjcxNjQ5fQ.6h_YU875EEImmW8EeBrTG4b0ASGDU1W5yXyTeJilsZ8"
-TEST_TEMP = "sensor.temperature_humidity_sensor_9e8b_temperature"
-TEST_HUMI = "sensor.temperature_humidity_sensor_9e8b_humidity"
+HASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxNGY2ZTk0MGIzNzI0ODcyOWFhMzk3MjM3MWU0YmMwOCIsImlhdCI6MTcyNjc4NzMwNCwiZXhwIjoyMDQyMTQ3MzA0fQ.0w6czUHoeelfpiUM0YDmRRumwsEjoKCZys9a1A7CSSY"
 
-ID_OUTSIDE_TEMP = TEST_TEMP
-ID_OUTSIDE_HUMI = TEST_HUMI
-ID_ROOM_TEMP = TEST_TEMP
-ID_ROOM_HUMI = TEST_HUMI
-ID_BEDROOM_TEMP = TEST_TEMP
-ID_BEDROOM_HUMI = TEST_HUMI
+ID_OUTSIDE_TEMP = "sensor.atc_42f8_temperature"
+ID_OUTSIDE_HUMI = "sensor.atc_42f8_humidity"
+ID_ROOM_TEMP =  "sensor.atc_52df_temperature"
+ID_ROOM_HUMI = "sensor.atc_52df_humidity"
+ID_BEDROOM_TEMP = "sensor.a4_c1_38_14_dd_f1_ddf1_temperature"
+ID_BEDROOM_HUMI = "sensor.a4_c1_38_14_dd_f1_ddf1_humidity"
 
 import sys
 import threading
@@ -165,12 +163,16 @@ ui.setupUi(window)
 
 COLOR_T1 = ui.label_TNUM_1.palette().color(QPalette.WindowText)
 COLOR_T2 = ui.label_TNUM_2.palette().color(QPalette.WindowText)
+COLOR_T3 = ui.label_TNUM_3.palette().color(QPalette.WindowText)
 COLOR_H1 = ui.label_HNUM_1.palette().color(QPalette.WindowText)
 COLOR_H2 = ui.label_HNUM_2.palette().color(QPalette.WindowText)
+COLOR_H3 = ui.label_HNUM_3.palette().color(QPalette.WindowText)
 ChartLabel(ui.label_chartT_1, ID_OUTSIDE_TEMP, COLOR_T1)
 ChartLabel(ui.label_chartH_1, ID_OUTSIDE_HUMI, COLOR_H1, 0, 100)
 ChartLabel(ui.label_chartT_2, ID_BEDROOM_TEMP, COLOR_T2)
 ChartLabel(ui.label_chartH_2, ID_BEDROOM_HUMI, COLOR_H2, 0, 100)
+ChartLabel(ui.label_chartT_3, ID_ROOM_TEMP, COLOR_T3)
+ChartLabel(ui.label_chartH_3, ID_ROOM_HUMI, COLOR_H3, 0, 100)
 
 # # 背景设置黑色
 # pal = QPalette(window.palette())

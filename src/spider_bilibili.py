@@ -44,7 +44,7 @@ class API:
 
     def __init__(self, your_uid: int) -> None:
         self._UID = your_uid
-        self.update()
+        # self.update()
 
 
 bilibili = API(UID)
