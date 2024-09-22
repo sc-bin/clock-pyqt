@@ -52,7 +52,8 @@ class ChartLabel(QtWidgets.QLabel):
     color_main: QColor
     y_min: int
     y_max: int
-
+    data_yesterday={0}
+    data_today={0}
     def __init__(
         self,
         parent: QtWidgets.QLabel,
@@ -77,10 +78,16 @@ class ChartLabel(QtWidgets.QLabel):
         self.y_min = y_min
         self.y_max = y_max
 
-        # self.timer = QTimer()  # 定时器
-        # self.timer.timeout.connect(self.update)
-        # self.timer.start(300000)  # 每5min 更新一次
+        self.timer = QTimer()  # 定时器
+        self.timer.timeout.connect(self.update_line)
+        self.timer.start(300000)  # 每5min 更新一次
 
+        self.update_line()
+
+    def update_line(self):
+        self.data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(self.entity)
+        self.data_today = HASS_API(HASS_TOKEN).get_hsitory_today(self.entity)
+        
     def draw_chart_line(self, data: list, color=None):
         """
         利用传入的数据，绘制折线图
@@ -111,10 +118,9 @@ class ChartLabel(QtWidgets.QLabel):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)  # 设置抗锯齿
 
-        data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(self.entity)
-        data_today = HASS_API(HASS_TOKEN).get_hsitory_today(self.entity)
-        self.draw_chart_line(data_yesterday)
-        self.draw_chart_line(data_today, self.color_main)
+
+        self.draw_chart_line(self.data_yesterday)
+        self.draw_chart_line(self.data_today, self.color_main)
 
 
 class my_window(QtWidgets.QMainWindow):
