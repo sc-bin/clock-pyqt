@@ -77,9 +77,9 @@ class ChartLabel(QtWidgets.QLabel):
         self.y_min = y_min
         self.y_max = y_max
 
-        self.timer = QTimer()  # 定时器
-        self.timer.timeout.connect(self.update)
-        self.timer.start(1000)  # 每1s 更新一次
+        # self.timer = QTimer()  # 定时器
+        # self.timer.timeout.connect(self.update)
+        # self.timer.start(300000)  # 每5min 更新一次
 
     def draw_chart_line(self, data: list, color=None):
         """

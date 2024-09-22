@@ -59,17 +59,17 @@ class HASS_API:
         if start_time != "":
             start_time = "/" + start_time
 
-        # 减少重复查询
-        data_key = f"{entity_id}-{start_time}-{end_time}"
-        if data_key in HISTORY_DATA.keys():
-            return HISTORY_DATA[data_key]
+        # # 减少重复查询
+        # data_key = f"{entity_id}-{start_time}-{end_time}"
+        # if data_key in HISTORY_DATA.keys():
+        #     return HISTORY_DATA[data_key]
 
         para = {"filter_entity_id": entity_id, "end_time": end_time}
         para = urlencode(para)
         history = self._get_json(
             "history/period" + start_time + "?" + para + "&minimal_response"
         )
-        HISTORY_DATA[data_key] = history
+        # HISTORY_DATA[data_key] = history
         return history
 
     def get_hsitory_in_1min(self, entity_id: str, time: str) -> list:
@@ -131,6 +131,42 @@ class HASS_API:
                 data_average.append(0)
 
         return data_average
+    def _get_hsitory_one_day_5_minuter(self, entity_id: str, day: str) -> list:
+        """
+        返回指定日期内，每5分钟的平均值,仅支持数值类型的实体
+        @entity_id: 实体标识符
+        @day: 格式为 2024-08-29
+        """
+
+        def convert_to_east_eight(utc_dt_str):
+            without_microseconds = utc_dt_str.split(".")[0]
+            without_tz = without_microseconds.replace("+00:00", "")
+            last_changed_utc = datetime.fromisoformat(without_tz)
+            return last_changed_utc + timedelta(hours=8)
+
+        time_start = f"{day}T00:00+08:00"
+        time_end = f"{day}T23:59+07:59"
+        history = self.get_hsitory(entity_id, time_start, time_end)
+
+        data = [[] for _ in range(24 * 12)]
+        if len(history) > 0:
+            for item in history[0]:
+                state = item["state"]
+                timestamp = item["last_changed"]
+                timestamp_east_eight = convert_to_east_eight(timestamp)  # 转换为东8区时间
+                minute_of_day = int((timestamp_east_eight.hour * 60 + timestamp_east_eight.minute) /5)
+                try:
+                    data[minute_of_day].append(float(state))
+                except:
+                    pass
+        data_average = []
+        for i in data:
+            if i.__len__() > 0:
+                data_average.append(average(i))
+            else:
+                data_average.append(0)
+
+        return data_average
 
     def get_hsitory_yesterday(self, entity_id: str) -> list:
         """
@@ -140,7 +176,7 @@ class HASS_API:
         now = datetime.now()
         yesterday_midnight = now - timedelta(days=1)
         formatted_time = yesterday_midnight.strftime("%Y-%m-%d")
-        return self._get_hsitory_one_day_all_minuter(entity_id, formatted_time)
+        return self._get_hsitory_one_day_5_minuter(entity_id, formatted_time)
 
     def get_hsitory_today(self, entity_id: str) -> list:
         """
@@ -149,7 +185,7 @@ class HASS_API:
         """
         now = datetime.now()
         formatted_time = now.strftime("%Y-%m-%d")
-        return self._get_hsitory_one_day_all_minuter(entity_id, formatted_time)
+        return self._get_hsitory_one_day_5_minuter(entity_id, formatted_time)
 
     def __init__(self, token: str, ip="127.0.0.1", port="8123") -> None:
         self._api_prefix = "http://" + ip + ":" + port + "/api/"
