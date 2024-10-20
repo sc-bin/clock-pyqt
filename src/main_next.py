@@ -31,7 +31,6 @@ import page2 as page
 from draw_clock import draw_clock
 from draw_label import label
 from hass_api import *
-from spider_bilibili import bilibili
 
 app = QtWidgets.QApplication(sys.argv)
 ui = page.Ui_MainWindow()
@@ -156,8 +155,6 @@ class my_window(QtWidgets.QMainWindow):
         str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_ROOM_HUMI)
         ui.label_HNUM_3.setText(str_humi)
 
-        # 显示粉丝数
-        ui.label_up_fans.setText(str(bilibili.fans))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -191,9 +188,6 @@ window.timer.timeout.connect(window.update)
 window.timer.start(1000)  # 每1s 更新一次
 
 
-bilitimer = QTimer()  # 定时器
-bilitimer.timeout.connect(bilibili.update)
-bilitimer.start(60 * 60 * 24 * 1000)  # 每隔24小时更新一次
 # window.show()
 window.showFullScreen()
 
