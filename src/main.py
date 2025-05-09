@@ -1,3 +1,12 @@
+HASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxNGY2ZTk0MGIzNzI0ODcyOWFhMzk3MjM3MWU0YmMwOCIsImlhdCI6MTcyNjc4NzMwNCwiZXhwIjoyMDQyMTQ3MzA0fQ.0w6czUHoeelfpiUM0YDmRRumwsEjoKCZys9a1A7CSSY"
+
+ID_OUTSIDE_TEMP = "sensor.atc_42f8_temperature"
+ID_OUTSIDE_HUMI = "sensor.atc_42f8_humidity"
+ID_ROOM_TEMP =  "sensor.atc_52df_temperature"
+ID_ROOM_HUMI = "sensor.atc_52df_humidity"
+ID_BEDROOM_TEMP = "sensor.a4_c1_38_14_dd_f1_ddf1_temperature"
+ID_BEDROOM_HUMI = "sensor.a4_c1_38_14_dd_f1_ddf1_humidity"
+
 import sys
 import threading
 
@@ -21,16 +30,7 @@ timer.timeout.connect(lambda: None)  # Let the interpreter run each 100 ms
 import page
 from draw_clock import draw_clock
 from draw_label import label
-from sensor_diy_temp import *
-from spider_bilibili import bilibili
-
-Color_str = QColor(100, 100, 100, 200)
-Color_num = QColor(150, 250, 80, 200)
-Color_tmp_outside = QColor(255, 255, 0, 150)
-Color_tmp_outside_dim = Color_str
-Color_tmp_inside = Color_num
-Color_up_str = QColor(255, 100, 150, 150)
-Color_up_num = QColor(255, 230, 230, 150)
+from hass_api import *
 
 app = QtWidgets.QApplication(sys.argv)
 ui = page.Ui_MainWindow()
@@ -39,35 +39,122 @@ ui = page.Ui_MainWindow()
 QCursor.setPos(QtWidgets.QApplication.instance().desktop().screen().rect().center())
 app.setOverrideCursor(Qt.BlankCursor)
 
+font_id = QFontDatabase.addApplicationFont("SEGUIEMJ.TTF")
+font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+print(f"字体名称为{font_family}")
+font = QFont(font_family)
+app.setFont(font)
+
+
+class ChartLabel(QtWidgets.QLabel):
+    entity: str
+    color_main: QColor
+    y_min: int
+    y_max: int
+    data_yesterday={0}
+    data_today={0}
+    def __init__(
+        self,
+        parent: QtWidgets.QLabel,
+        entity_id: str,
+        color_main_line: QColor,
+        y_min=0,
+        y_max=50,
+    ):
+        """
+        在label上绘制图表的类
+            @parent: 继承父label,使用其尺寸及位置
+            @entity_id: 实体id,准备在这个图标中显示的
+            @color_main_line: 今日数据的线条颜色
+            @y_min: y轴刻度起始
+            @y_max: y轴刻度最大值
+        """
+        super(ChartLabel, self).__init__(parent)
+        self.resize(parent.width(), parent.height())
+        parent.setText("")
+        self.entity = entity_id
+        self.color_main = color_main_line
+        self.y_min = y_min
+        self.y_max = y_max
+
+        self.timer = QTimer()  # 定时器
+        self.timer.timeout.connect(self.update_line)
+        self.timer.start(300000)  # 每5min 更新一次
+
+        self.update_line()
+
+    def update_line(self):
+        self.data_yesterday = HASS_API(HASS_TOKEN).get_hsitory_yesterday(self.entity)
+        self.data_today = HASS_API(HASS_TOKEN).get_hsitory_today(self.entity)
+        
+    def draw_chart_line(self, data: list, color=None):
+        """
+        利用传入的数据，绘制折线图
+        @data: 数据列表
+        @color: 线条颜色
+        """
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)  # 设置抗锯齿
+        painter.save()
+        if color != None:
+            painter.setPen(color)
+        painter.translate(self.pos().x(), self.pos().y() + self.height())
+        painter.scale(self.width() / len(data), 1)
+        y_scale = self.height() / (self.y_max - self.y_min)
+        path = QPainterPath()
+        path.moveTo(0, 0)
+        for i in range(len(data)):
+            if data[i] == 0:
+                path.lineTo(i, 0)
+            else:
+                path.lineTo(i, -((data[i] - self.y_min)) * y_scale)
+        painter.drawPath(path)
+
+        painter.restore()
+
+    def paintEvent(self, event):
+        # print("重绘")
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)  # 设置抗锯齿
+
+
+        self.draw_chart_line(self.data_yesterday)
+        self.draw_chart_line(self.data_today, self.color_main)
+
 
 class my_window(QtWidgets.QMainWindow):
     def paintEvent(self, event):
-        # print("paintEvent")
+
+        # 绘制时钟
         draw_clock(self, QPainter(self), ui.label_clock)
+        now = datetime.now()
+        formatted_time = now.strftime("%H:%M")
+        ui.label_clock_num.setText(formatted_time)
 
-        label(self, QPainter(self), ui.label_TNUM1).draw_str(
-            SENSOR[1].get_temp(), Color_tmp_outside
-        )
-        label(self, QPainter(self), ui.label_TNUM2).draw_str(
-            SENSOR[2].get_temp(), Color_tmp_inside
-        )
-        label(self, QPainter(self), ui.label_TNUM3).draw_str(
-            SENSOR[0].get_temp(), Color_num
-        )
-        label(self, QPainter(self), ui.label_STR1).draw_str("室外", Color_str)
-        label(self, QPainter(self), ui.label_STR2).draw_str("室内", Color_str)
-        label(self, QPainter(self), ui.label_STR3).draw_str("卧室", Color_str)
-        label(self, QPainter(self), ui.label_chart).add_chart_line(
-            SENSOR[1].min15_today(), Color_tmp_outside
-        )
-        label(self, QPainter(self), ui.label_chart).add_chart_line(
-            SENSOR[1].min15_yesterday(), Color_tmp_outside_dim
-        )
+        # 显示室外温度
+        str_temp = "🌡" + HASS_API(HASS_TOKEN).get_state(ID_OUTSIDE_TEMP)
+        ui.label_TNUM_1.setText(str_temp)
 
-        label(self, QPainter(self), ui.label_STR4).draw_str("粉丝 :", Color_up_str)
-        label(self, QPainter(self), ui.label_up_fans).draw_str(
-            str(bilibili.fans), Color_up_num
-        )
+        # 显示室外湿度
+        str_humi = "💧" + HASS_API(HASS_TOKEN).get_state(ID_OUTSIDE_HUMI)
+        ui.label_HNUM_1.setText(str_humi)
+
+        # 显示卧室温度
+        str_temp = "🌡" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_TEMP)
+        ui.label_TNUM_2.setText(str_temp)
+
+        # 显示室外湿度
+        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_BEDROOM_HUMI)
+        ui.label_HNUM_2.setText(str_humi)
+
+        # 显示客厅温度
+        str_temp = "🌡" + HASS_API(HASS_TOKEN).get_state(ID_ROOM_TEMP)
+        ui.label_TNUM_3.setText(str_temp)
+
+        # 显示客厅湿度
+        str_humi = "🩸" + HASS_API(HASS_TOKEN).get_state(ID_ROOM_HUMI)
+        ui.label_HNUM_3.setText(str_humi)
+
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -77,11 +164,23 @@ class my_window(QtWidgets.QMainWindow):
 window = my_window()
 ui.setupUi(window)
 
+COLOR_T1 = ui.label_TNUM_1.palette().color(QPalette.WindowText)
+COLOR_T2 = ui.label_TNUM_2.palette().color(QPalette.WindowText)
+COLOR_T3 = ui.label_TNUM_3.palette().color(QPalette.WindowText)
+COLOR_H1 = ui.label_HNUM_1.palette().color(QPalette.WindowText)
+COLOR_H2 = ui.label_HNUM_2.palette().color(QPalette.WindowText)
+COLOR_H3 = ui.label_HNUM_3.palette().color(QPalette.WindowText)
+ChartLabel(ui.label_chartT_1, ID_OUTSIDE_TEMP, COLOR_T1)
+ChartLabel(ui.label_chartH_1, ID_OUTSIDE_HUMI, COLOR_H1, 0, 100)
+ChartLabel(ui.label_chartT_2, ID_BEDROOM_TEMP, COLOR_T2)
+ChartLabel(ui.label_chartH_2, ID_BEDROOM_HUMI, COLOR_H2, 0, 100)
+ChartLabel(ui.label_chartT_3, ID_ROOM_TEMP, COLOR_T3)
+ChartLabel(ui.label_chartH_3, ID_ROOM_HUMI, COLOR_H3, 0, 100)
 
-# 背景设置黑色
-pal = QPalette(window.palette())
-pal.setColor(QPalette.ColorRole.Background, QColor(Qt.GlobalColor.black))
-window.setPalette(pal)
+# # 背景设置黑色
+# pal = QPalette(window.palette())
+# pal.setColor(QPalette.ColorRole.Background, QColor(Qt.GlobalColor.black))
+# window.setPalette(pal)
 
 # 定时触发重绘
 window.timer = QTimer()  # 定时器
@@ -89,9 +188,6 @@ window.timer.timeout.connect(window.update)
 window.timer.start(1000)  # 每1s 更新一次
 
 
-bilitimer = QTimer()  # 定时器
-bilitimer.timeout.connect(bilibili.update)
-bilitimer.start(60 * 60 * 24 * 1000)  # 每隔24小时更新一次
 # window.show()
 window.showFullScreen()
 
