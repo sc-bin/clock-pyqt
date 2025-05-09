@@ -2,10 +2,6 @@
 用pyqt编写的一个时钟
 
 
-
-![a](./时钟.jpg)
-
-
 # 部署到核桃派box上
 使用硬件为walnutpi-box小主机，烧录官方的带桌面且预装了hass的镜像 **2024-7-12_V2.4.0_WalnutPi-1B_6.1.31_Home-Assistant_deaktop**
 
